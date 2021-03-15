@@ -1,6 +1,6 @@
 #
-#  Megalodon Server
-#  Server programs for decentralized computing.
+#  Sharktest
+#  Programs for testing Megalodon.
 #  Copyright the Megalodon authors 2021
 #
 #  This program is free software: you can redistribute it and/or modify
