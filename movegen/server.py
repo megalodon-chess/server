@@ -24,7 +24,7 @@ import socket
 import threading
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
-DATA_PATH = os.path.join(PARENT, "failed.txt")
+DATA_PATH = os.path.join(PARENT, "movegen.txt")
 
 
 class DataManager:
