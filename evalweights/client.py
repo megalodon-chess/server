@@ -30,8 +30,8 @@ ENG_PATH = os.path.join(PARENT, "Megalodon")
 PARAMS = (
     "EvalCenter",
 )
-BATCH_SIZE = 50
-DEPTH = 4
+BATCH_SIZE = 10
+DEPTH = 3
 ALG = "DFS"
 
 IP = input("IP: ")
@@ -102,6 +102,11 @@ def main():
         batch_num += 1
         print(f"Batch {batch_num}: {BATCH_SIZE} games")
         results = play_games()
+        print("Results:")
+        print("* 1-0: {} games".format(results["results"].count(1)))
+        print("* 0-1: {} games".format(results["results"].count(-1)))
+        print("* 1/2-1/2: {} games".format(results["results"].count(0)))
+        print()
 
 
 main()
