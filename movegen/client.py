@@ -17,14 +17,19 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import os
 import random
 import subprocess
 import io
 import socket
 import chess
 
+PARENT = os.path.dirname(os.path.realpath(__file__))
+ENG_PATH = os.path.join(PARENT, "Megalodon")
+TMP1 = os.path.join(PARENT, "tmp1")
+TMP2 = os.path.join(PARENT, "tmp2")
+
 BATCH_SIZE = 100
-ENG_PATH = "./Megalodon"
 IP = input("IP: ")
 
 
@@ -57,9 +62,12 @@ def engine_output(positions):
             in_data += m.uci() + " "
         in_data += "\nlegalmoves\n"
 
-    out_data = io.StringIO()
-    subprocess.Popen([ENG_PATH], stdin=io.StringIO(in_data), stdout=out_data).wait()
-    print(out_data)
+    with open(TMP1, "w") as file:
+        file.write(in_data)
+    with open(TMP1, "r") as stdin, open(TMP2, "w") as stdout:
+        subprocess.Popen([ENG_PATH], stdin=stdin, stdout=stdout).wait()
+    with open(TMP2, "r") as file:
+        out_data = file.read()
 
 
 def main():
