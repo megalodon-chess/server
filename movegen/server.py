@@ -29,6 +29,7 @@ DATA_PATH = os.path.join(PARENT, "failed.txt")
 class DataManager:
     def __init__(self):
         self.queue = []
+        self.msgs = []
         threading.Thread(target=self.writer).start()
 
     def write(self, msg):
@@ -39,9 +40,11 @@ class DataManager:
             time.sleep(0.01)
             if len(self.queue) > 0:
                 msg = self.queue.pop(0)
-                with open(DATA_PATH, "a") as file:
-                    file.write(msg)
-                    file.write("\n")
+                if msg not in self.msgs:
+                    with open(DATA_PATH, "a") as file:
+                        file.write(msg)
+                        file.write("\n")
+                    self.msgs.append(msg)
 
 
 def client(conn, addr, dataman):
