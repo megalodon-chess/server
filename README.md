@@ -1,2 +1,2 @@
-# server
-Server programs for decentralized computing.
+# Sharktest
+Programs for testing Megalodon.
