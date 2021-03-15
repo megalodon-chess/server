@@ -1,2 +1,2 @@
 # server
-Server programs for decentralized computing.
+Programs for testing Megalodon.
