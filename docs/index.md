@@ -15,6 +15,15 @@ The tests are separated into folders in the main directory.
 
 Python package requirements are in `requirements.txt`.
 
+All tests will ask for a server IP address via stdin.
+Please read the section **Server IP** for more information.
+
+## Server IP
+
+There is currently no official server for Sharktest.
+
+The Megalodon team will start hosting a server on March 28, 2021.
+
 ## Current Tests
 
 ### [Movegen][movegen]
