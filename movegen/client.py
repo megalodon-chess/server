@@ -17,10 +17,10 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import sys
 import os
 import random
 import subprocess
-import io
 import socket
 import chess
 
@@ -86,6 +86,9 @@ def engine_output(positions):
 
 
 def main():
+    tried = 0
+    failed = 0
+
     while True:
         positions = []
         for i in range(BATCH_SIZE):
@@ -97,6 +100,13 @@ def main():
             eng_moves = output.pop(0)
             if set(real_moves) != set(eng_moves):
                 send_result(moves)
+                failed += 1
+
+        tried += BATCH_SIZE
+
+        sys.stdout.write("\r"+" "*50+"\r")
+        sys.stdout.write(f"{tried} tried, {failed} failed.")
+        sys.stdout.flush()
 
 
 main()
