@@ -73,11 +73,7 @@ def engine_output(positions):
     while len(lines) > 0:
         l = lines.pop(0)
         if l.isdigit():
-            curr_moves = []
-            for i in range(int(l)):
-                l = lines.pop(0)
-                curr_moves.append(chess.Move.from_uci(l))
-            out_moves.append(curr_moves)
+            out_moves.append([lines.pop(0) for i in range(int(l))])
     return out_moves
 
 
