@@ -17,6 +17,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import sys
 import os
 import time
 import socket
@@ -30,6 +31,7 @@ class DataManager:
     def __init__(self):
         self.queue = []
         self.msgs = []
+        self.written = 0
         threading.Thread(target=self.writer).start()
 
     def write(self, msg):
@@ -45,6 +47,11 @@ class DataManager:
                         file.write(msg)
                         file.write("\n")
                     self.msgs.append(msg)
+                    self.written += 1
+
+                sys.stdout.write("\r"+" "*50+"\r")
+                sys.stdout.write(f"Received {self.written} failed sequences.")
+                sys.stdout.flush()
 
 
 def client(conn, addr, dataman):
