@@ -66,6 +66,16 @@ def play_games():
             result = black.play(board, chess.engine.Limit(depth=DEPTH))
             board.push(result.move)
 
+        result = board.result()
+        if result == "0-1":
+            results["results"].append(-1)
+        elif result == "1/2-1/2":
+            results["results"].append(0)
+        elif result == "1-0":
+            results["results"].append(1)
+
+    return results
+
 
 def main():
     while True:
