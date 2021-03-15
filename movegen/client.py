@@ -51,7 +51,7 @@ def random_pos():
 
 def send_result(moves):
     conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    conn.connect(IP, 5555)
+    conn.connect((IP, 5555))
 
     data = " ".join([m.uci() for m in moves])
     len_msg = str(len(data))
