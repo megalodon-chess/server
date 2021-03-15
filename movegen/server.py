@@ -22,7 +22,9 @@ import threading
 
 
 def client(conn, addr):
-    pass
+    length = int(conn.recv(64))
+    moves = conn.recv(length).decode()
+    conn.close()
 
 
 def main():
