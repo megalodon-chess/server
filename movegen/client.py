@@ -49,9 +49,11 @@ def random_pos():
     return (board, moves)
 
 
-def send_result():
-    conn = socket.socket
+def send_result(moves):
+    conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     conn.connect(IP, 5555)
+    conn.send(" ".join([m.uci() for m in moves]).encode())
+    conn.close()
 
 
 def engine_output(positions):
@@ -84,6 +86,11 @@ def main():
             positions.append(random_pos())
 
         output = engine_output(positions)
+        for board, moves in positions:
+            real_moves = [m.uci() for m in board.generate_legal_moves()]
+            eng_moves = output.pop(0)
+            if set(real_moves) != set(eng_moves):
+                send_result(moves)
 
 
 main()
