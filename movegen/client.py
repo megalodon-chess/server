@@ -24,6 +24,7 @@ import socket
 import chess
 
 BATCH_SIZE = 100
+ENG_PATH = "./Megalodon"
 IP = input("IP: ")
 
 
@@ -48,8 +49,26 @@ def send_result():
     conn.connect(IP, 5555)
 
 
+def engine_output(positions):
+    in_data = ""
+    for board, moves in positions:
+        in_data += "position startpos moves "
+        for m in moves:
+            in_data += m.uci() + " "
+        in_data += "\nlegalmoves\n"
+
+    out_data = io.StringIO()
+    subprocess.Popen([ENG_PATH], stdin=io.StringIO(in_data), stdout=out_data).wait()
+    print(out_data)
+
+
 def main():
-    board, moves = random_pos()
+    while True:
+        positions = []
+        for i in range(BATCH_SIZE):
+            positions.append(random_pos())
+
+        output = engine_output(positions)
 
 
 main()
