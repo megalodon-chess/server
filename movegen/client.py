@@ -29,7 +29,7 @@ ENG_PATH = os.path.join(PARENT, "Megalodon")
 TMP1 = os.path.join(PARENT, "tmp1")
 TMP2 = os.path.join(PARENT, "tmp2")
 
-BATCH_SIZE = 2
+BATCH_SIZE = 20
 IP = input("IP: ")
 
 
