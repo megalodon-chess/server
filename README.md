@@ -1,2 +1,2 @@
-# sharktest
+# Sharktest
 Programs for testing Megalodon.
