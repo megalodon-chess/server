@@ -31,8 +31,10 @@ PARAMS = (
     "EvalCenter",
 )
 BATCH_SIZE = 50
-DEPTH = 3
+DEPTH = 4
 ALG = "DFS"
+
+IP = input("IP: ")
 
 
 def rand_configure(engine, weights):
@@ -42,12 +44,25 @@ def rand_configure(engine, weights):
 
 
 def play_games():
-    weights = [random.randint(0, 1000) for i in PARAMS]
+    weights = [random.randint(0, 300) for i in PARAMS]
     results = {"weights": {}, "results": []}
     for i in range(len(PARAMS)):
         results["weights"][PARAMS[i]] = weights[i]
 
+    max_len = len(max(PARAMS, key=len)) + 2
+    print("Evaluation weights:")
+    for i in range(len(PARAMS)):
+        sys.stdout.write(f"* {PARAMS[i]}:")
+        for j in range(max_len-len(PARAMS[i])):
+            sys.stdout.write(" ")
+        sys.stdout.write(f"{weights[i]}%\n")
+    sys.stdout.flush()
+
     for i in range(BATCH_SIZE):
+        sys.stdout.write("\r"+" "*50+"\r")
+        sys.stdout.write(f"Playing game {i+1}...")
+        sys.stdout.flush()
+
         white = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
         black = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
         white.configure({"SearchDepth": DEPTH})
@@ -74,11 +89,18 @@ def play_games():
         elif result == "1-0":
             results["results"].append(1)
 
+    sys.stdout.write("\r"+" "*50+"\r")
+    sys.stdout.write(f"Finished {BATCH_SIZE} games.\n")
+    sys.stdout.flush()
+
     return results
 
 
 def main():
+    batch_num = 0
     while True:
+        batch_num += 1
+        print(f"Batch {batch_num}: {BATCH_SIZE} games")
         results = play_games()
 
 
