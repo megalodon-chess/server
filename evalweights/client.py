@@ -49,7 +49,21 @@ def play_games():
     for i in range(len(PARAMS)):
         results["weights"][PARAMS[i]] = weights[i]
 
+    white = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
+    black = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
+    white.configure({"SearchDepth": DEPTH})
+    black.configure({"SearchDepth": DEPTH})
+    white.configure({"SearchAlg": ALG})
+    black.configure({"SearchAlg": ALG})
+    if random.random() < 0.5:
+        white = rand_configure(white, weights)
+        test = "White"
+    else:
+        black = rand_configure(black, weights)
+        test = "Black"
+
     max_len = len(max(PARAMS, key=len)) + 2
+    print(f"Side adjusted: {test}")
     print("Evaluation weights:")
     for i in range(len(PARAMS)):
         sys.stdout.write(f"* {PARAMS[i]}:")
@@ -62,17 +76,6 @@ def play_games():
         sys.stdout.write("\r"+" "*50+"\r")
         sys.stdout.write(f"Playing game {i+1}...")
         sys.stdout.flush()
-
-        white = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
-        black = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
-        white.configure({"SearchDepth": DEPTH})
-        black.configure({"SearchDepth": DEPTH})
-        white.configure({"SearchAlg": ALG})
-        black.configure({"SearchAlg": ALG})
-        if random.random() < 0.5:
-            white = rand_configure(white, weights)
-        else:
-            black = rand_configure(black, weights)
 
         board = chess.Board()
         while not board.is_game_over():
