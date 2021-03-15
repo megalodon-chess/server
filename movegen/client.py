@@ -62,13 +62,12 @@ def send_result(moves):
     conn.close()
 
 
-def engine_output(positions):
+def engine_output(moves):
     in_data = ""
-    for board, moves in positions:
-        in_data += "position startpos moves "
-        for m in moves:
-            in_data += m.uci() + " "
-        in_data += "\nlegalmoves\n"
+    in_data += "position startpos moves "
+    for m in moves:
+        in_data += m.uci() + " "
+    in_data += "\nlegalmoves\n"
 
     with open(TMP1, "w") as file:
         file.write(in_data)
@@ -94,8 +93,8 @@ def main():
         for i in range(BATCH_SIZE):
             positions.append(random_pos())
 
-        output = engine_output(positions)
         for board, moves in positions:
+            output = engine_output(moves)
             real_moves = [m.uci() for m in board.generate_legal_moves()]
             eng_moves = output.pop(0)
             if set(real_moves) != set(eng_moves):
