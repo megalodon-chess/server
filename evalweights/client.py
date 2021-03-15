@@ -31,6 +31,8 @@ PARAMS = (
     "EvalCenter",
 )
 BATCH_SIZE = 50
+DEPTH = 3
+ALG = "DFS"
 
 
 def rand_configure(engine, weights):
@@ -40,15 +42,29 @@ def rand_configure(engine, weights):
 
 
 def play_games():
-    results = []
     weights = [random.randint(0, 1000) for i in PARAMS]
+    results = {"weights": {}, "results": []}
+    for i in range(len(PARAMS)):
+        results["weights"][PARAMS[i]] = weights[i]
+
     for i in range(BATCH_SIZE):
         white = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
         black = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
+        white.configure({"SearchDepth": DEPTH})
+        black.configure({"SearchDepth": DEPTH})
+        white.configure({"SearchAlg": ALG})
+        black.configure({"SearchAlg": ALG})
         if random.random() < 0.5:
             white = rand_configure(white, weights)
         else:
             black = rand_configure(black, weights)
+
+        board = chess.Board()
+        while not board.is_game_over():
+            result = white.play(board, chess.engine.Limit(depth=DEPTH))
+            board.push(result.move)
+            result = black.play(board, chess.engine.Limit(depth=DEPTH))
+            board.push(result.move)
 
 
 def main():
