@@ -23,6 +23,9 @@ import io
 import socket
 import chess
 
+BATCH_SIZE = 100
+IP = input("IP: ")
+
 
 def random_pos():
     moves = []
@@ -30,7 +33,10 @@ def random_pos():
     movect = random.choices(range(60), weights=[1.05**x for x in range(60)])[0]
 
     for i in range(movect):
-        move = random.choice(list(board.generate_legal_moves()))
+        legal_moves = list(board.generate_legal_moves())
+        if len(legal_moves) == 0:
+            break
+        move = random.choice(legal_moves)
         board.push(move)
         moves.append(move)
 
@@ -38,7 +44,8 @@ def random_pos():
 
 
 def send_result():
-    pass
+    conn = socket.socket
+    conn.connect(IP, 5555)
 
 
 def main():
