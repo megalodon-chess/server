@@ -17,10 +17,24 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import random
 import subprocess
 import io
 import socket
 import chess
+
+
+def random_pos():
+    moves = []
+    board = chess.Board()
+    movect = random.choices(range(60), weights=[1.05**x for x in range(60)])[0]
+
+    for i in range(movect):
+        move = random.choice(list(board.generate_legal_moves()))
+        board.push(move)
+        moves.append(move)
+
+    return (board, moves)
 
 
 def send_result():
@@ -28,7 +42,7 @@ def send_result():
 
 
 def main():
-    pass
+    board, moves = random_pos()
 
 
 main()
