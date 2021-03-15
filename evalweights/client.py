@@ -30,7 +30,7 @@ ENG_PATH = os.path.join(PARENT, "Megalodon")
 PARAMS = (
     "EvalCenter",
 )
-BATCH_SIZE = 10
+BATCH_SIZE = 20
 DEPTH = 3
 ALG = "DFS"
 
