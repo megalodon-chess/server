@@ -29,7 +29,7 @@ ENG_PATH = os.path.join(PARENT, "Megalodon")
 TMP1 = os.path.join(PARENT, "tmp1")
 TMP2 = os.path.join(PARENT, "tmp2")
 
-BATCH_SIZE = 100
+BATCH_SIZE = 2
 IP = input("IP: ")
 
 
@@ -67,7 +67,18 @@ def engine_output(positions):
     with open(TMP1, "r") as stdin, open(TMP2, "w") as stdout:
         subprocess.Popen([ENG_PATH], stdin=stdin, stdout=stdout).wait()
     with open(TMP2, "r") as file:
-        out_data = file.read()
+        lines = file.read().split("\n")
+
+    out_moves = []
+    while len(lines) > 0:
+        l = lines.pop(0)
+        if l.isdigit():
+            curr_moves = []
+            for i in range(int(l)):
+                l = lines.pop(0)
+                curr_moves.append(chess.Move.from_uci(l))
+            out_moves.append(curr_moves)
+    return out_moves
 
 
 def main():
