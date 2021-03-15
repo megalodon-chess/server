@@ -1,7 +1,11 @@
 __pycache__
 .vscode
 
-tmp1
-tmp2
-
 Megalodon
+
+/movegen/movegen.txt
+/evalweights/evalweights.txt
+
+/movegen/tmp1
+/movegen/tmp2
+
