@@ -96,6 +96,9 @@ def play_games():
     sys.stdout.write(f"Finished {BATCH_SIZE} games.\n")
     sys.stdout.flush()
 
+    white.quit()
+    black.quit()
+
     return results
 
 
