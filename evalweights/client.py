@@ -19,8 +19,10 @@
 
 import sys
 import os
+import random
 import socket
 import chess
+import chess.engine
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
 ENG_PATH = os.path.join(PARENT, "Megalodon")
@@ -31,8 +33,27 @@ PARAMS = (
 BATCH_SIZE = 50
 
 
+def rand_configure(engine, weights):
+    for i in range(len(PARAMS)):
+        engine.configure({PARAMS[i]: weights[i]})
+    return engine
+
+
+def play_games():
+    results = []
+    weights = [random.randint(0, 1000) for i in PARAMS]
+    for i in range(BATCH_SIZE):
+        white = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
+        black = chess.engine.SimpleEngine.popen_uci(ENG_PATH)
+        if random.random() < 0.5:
+            white = rand_configure(white, weights)
+        else:
+            black = rand_configure(black, weights)
+
+
 def main():
-    pass
+    while True:
+        results = play_games()
 
 
 main()
