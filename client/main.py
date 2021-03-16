@@ -18,17 +18,32 @@
 #
 
 import pysocket
+from getpass import getpass
+from hashlib import sha256
 
 IP = input("IP address: ")
 
 
-def login():
-    pass
+def login(conn: pysocket.Client):
+    print("Please enter login information.")
+    print("Please use a password that is not used for other accounts.")
+    print("This will keep your password safe in the event of a data breach.")
+    print("If the username does not exist, a new account will be created.")
+    while True:
+        uname = input("Username: ")
+        pword = sha256(getpass("Password: ")).hexdigest()
+        conn.send({"type": "login", "uname": uname, "pword": pword})
+        reply = conn.recv()
+        if reply["status"]:
+            print("Successfully logged in.")
+            return (uname, pword)
+        else:
+            print("Error: {}".format(reply["error"]))
 
 
 def main():
-    login_info = login()
     conn = pysocket.Client(IP, 5555, b"ZpwRHLnL816lggGgAOY80dtq9cgALp-YW2EUBqa0pwQ=")
+    login_info = login(conn)
 
 
 main()
