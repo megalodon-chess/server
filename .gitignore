@@ -3,9 +3,4 @@ __pycache__
 
 Megalodon
 
-/movegen/movegen.txt
-/evalweights/evalweights.txt
-
-/movegen/tmp1
-/movegen/tmp2
-
+/server/data
