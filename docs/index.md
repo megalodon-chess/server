@@ -26,13 +26,6 @@ The Megalodon team will start hosting a server on March 28, 2021.
 
 ## Current Tests
 
-### [Movegen][movegen]
+### Movegen
 
 This is for testing Megalodon's move generation accuracy.
-
-### [Evalweights][evalweights]
-
-This is for tuning the evaluation accuracy of Megalodon.
-
-[movegen]: https://megalodon-chess.github.io/sharktest/movegen
-[evalweights]: https://megalodon-chess.github.io/sharktest/evalweights
