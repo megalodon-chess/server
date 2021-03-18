@@ -56,11 +56,16 @@ def play_games(option, value, side):
 
                 board.push(white.play(board, chess.engine.Limit(depth=DEPTH)))
                 board.push(black.play(board, chess.engine.Limit(depth=DEPTH)))
+            sys.stdout.write("\r"+" "*60+"\r")
+            sys.stdout.write(f"Playing game {game+1}: Finished")
+            sys.stdout.flush()
 
         except KeyboardInterrupt:
             white.quit()
             black.quit()
             raise KeyboardInterrupt
+
+    print()
 
 
 def start(options):
@@ -87,6 +92,7 @@ def main():
     exe = conn.recv()
     with open(EXE_PATH, "wb") as file:
         file.write(exe)
+    os.system(f"chmod +x {EXE_PATH}")
 
     start(options)
     conn.send({"type": "quit"})
