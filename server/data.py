@@ -20,19 +20,27 @@
 import os
 import threading
 import json
-import pysocket
 from constants import *
-from data import DataMan
 
 
-def start(self: pysocket.server.Client, dataman: DataMan):
-    self.alert("Connected")
+class DataMan:
+    def __init__(self) -> None:
+        self.queue = []
+        threading.Thread(target=self.start).start()
 
+    def start(self):
+        pass
 
-def main():
-    dataman = DataMan()
-    server = pysocket.Server(IP, 5555, start, b"ZpwRHLnL816lggGgAOY80dtq9cgALp-YW2EUBqa0pwQ=", args=(dataman,))
-    server.start()
+    def read(self, path, mode="r"):
+        with open(os.path.join(DATA_PATH, path), mode) as file:
+            return file.read()
 
+    def write(self, path, data, mode="w"):
+        with open(os.path.join(DATA_PATH, path), mode) as file:
+            file.writable(data)
 
-main()
+    def load(self, path):
+        return json.loads(self.read(path))
+
+    def dump(self, path, obj):
+        self.write(path, json.dumps(obj))

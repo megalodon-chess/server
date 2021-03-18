@@ -18,21 +18,7 @@
 #
 
 import os
-import threading
-import json
-import pysocket
-from constants import *
-from data import DataMan
 
-
-def start(self: pysocket.server.Client, dataman: DataMan):
-    self.alert("Connected")
-
-
-def main():
-    dataman = DataMan()
-    server = pysocket.Server(IP, 5555, start, b"ZpwRHLnL816lggGgAOY80dtq9cgALp-YW2EUBqa0pwQ=", args=(dataman,))
-    server.start()
-
-
-main()
+PARENT = os.path.dirname(os.path.realpath(__file__))
+DATA_PATH = os.path.join(PARENT, "data")
+IP = input("IP: ")
