@@ -28,6 +28,7 @@ PARENT = os.path.dirname(os.path.realpath(__file__))
 IP = input("IP: ")
 EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
 GAME_CNT = 100
+DEPTH = 3
 
 
 def play_games(option, value, side):
@@ -37,13 +38,25 @@ def play_games(option, value, side):
 
     for game in range(GAME_CNT):
         try:
-            print(f"Playing game {game+1}: ")
+            print(f"Playing game {game+1}: ", end="", flush=True)
             white = chess.engine.SimpleEngine.popen_uci(EXE_PATH)
             black = chess.engine.SimpleEngine.popen_uci(EXE_PATH)
             if side:
                 white.configure({option: value})
             else:
                 black.configure({option: value})
+
+            board = chess.Board()
+            move_num = 0
+            while not board.is_game_over():
+                move_num += 1
+                sys.stdout.write("\r"+" "*60+"\r")
+                sys.stdout.write(f"Playing game {game+1}: Move {move_num}")
+                sys.stdout.flush()
+
+                board.push(white.play(board, chess.engine.Limit(depth=DEPTH)))
+                board.push(black.play(board, chess.engine.Limit(depth=DEPTH)))
+
         except KeyboardInterrupt:
             white.quit()
             black.quit()
