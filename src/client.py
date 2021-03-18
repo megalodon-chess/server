@@ -54,15 +54,22 @@ def play_games(option, value, side):
                 sys.stdout.write(f"Playing game {game+1}: Move {move_num}")
                 sys.stdout.flush()
 
-                board.push(white.play(board, chess.engine.Limit(depth=DEPTH)))
-                board.push(black.play(board, chess.engine.Limit(depth=DEPTH)))
+                try:
+                    board.push(white.play(board, chess.engine.Limit(depth=DEPTH)).move)
+                    board.push(black.play(board, chess.engine.Limit(depth=DEPTH)).move)
+                except chess.engine.EngineError:
+                    sys.stdout.write("\r"+" "*60+"\r")
+                    sys.stdout.write(f"Playing game {game+1}: Illegal move.")
+                    sys.stdout.flush()
+                    break
+
             sys.stdout.write("\r"+" "*60+"\r")
             sys.stdout.write(f"Playing game {game+1}: Finished")
             sys.stdout.flush()
 
         except KeyboardInterrupt:
-            white.quit()
-            black.quit()
+            white.close()
+            black.close()
             raise KeyboardInterrupt
 
     print()
