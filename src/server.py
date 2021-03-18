@@ -26,6 +26,7 @@ from hashlib import sha256
 PARENT = os.path.dirname(os.path.realpath(__file__))
 DATA_PATH = os.path.join(PARENT, "data")
 IP = input("IP: ")
+EXE_PATH = os.path.join(PARENT, "Megalodon")
 OPTIONS = (
     "EvalMaterial",
     "EvalCenter",
@@ -42,6 +43,8 @@ def start(self: pysocket.server.Client):
 
     self.alert("Connected")
     self.send(OPTIONS)
+    with open(EXE_PATH, "rb") as file:
+        self.send(file.read())
 
     with open(fname, "w") as file:
         json.dump([], file, indent=4)
