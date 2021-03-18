@@ -17,9 +17,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import sys
 import os
 import random
 import chess
+import chess.engine
 import pysocket
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
@@ -28,16 +30,39 @@ EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
 GAME_CNT = 100
 
 
-def play_games(option, value):
-    pass
+def play_games(option, value, side):
+    print(f"    Tested option: {option}")
+    print(f"    New value: {value}")
+    print("    Tested side: {}".format("White" if side else "Black"))
+
+    for game in range(GAME_CNT):
+        try:
+            print(f"Playing game {game+1}: ")
+            white = chess.engine.SimpleEngine.popen_uci(EXE_PATH)
+            black = chess.engine.SimpleEngine.popen_uci(EXE_PATH)
+            if side:
+                white.configure({option: value})
+            else:
+                black.configure({option: value})
+        except KeyboardInterrupt:
+            white.quit()
+            black.quit()
+            raise KeyboardInterrupt
 
 
 def start(options):
+    match = 0
+
     while True:
         try:
+            match += 1
+            print(f"Playing games: Match {match}, {GAME_CNT} games")
+
             option = random.choice(options)
             value = random.randint(0, 1000)
-            play_games(option, value)
+            side = random.random() > 0.5
+            play_games(option, value, side)
+
         except KeyboardInterrupt:
             print("Terminated")
             return
