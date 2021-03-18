@@ -22,5 +22,17 @@ import json
 import pysocket
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
-DATA_PATH = os.path.join(PARENT, "data.json")
+DATA_PATH = os.path.join(PARENT, "data")
 IP = input("IP: ")
+
+
+def start(self: pysocket.server.Client):
+    pass
+
+
+def main():
+    server = pysocket.Server(IP, 5555, start, b"wemHc7uk4y8AKzFTzx2CvwrAfVBPtb2uQLhXLuKoDfY=")
+    server.start()
+
+
+main()
