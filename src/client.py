@@ -47,6 +47,9 @@ def play_games(option, value, side):
                 black.configure({option: value})
 
             board = chess.Board()
+            for i in range(2):
+                board.push(random.choice(list(board.generate_legal_moves())))
+
             move_num = 0
             while not board.is_game_over():
                 move_num += 1
