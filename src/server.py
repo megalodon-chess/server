@@ -18,8 +18,10 @@
 #
 
 import os
+import random
 import json
 import pysocket
+from hashlib import sha256
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
 DATA_PATH = os.path.join(PARENT, "data")
@@ -27,7 +29,28 @@ IP = input("IP: ")
 
 
 def start(self: pysocket.server.Client):
-    pass
+    fname = sha256(str(random.randint(0, 10000000000)+random.random()).encode()).hexdigest() + ".json"
+    fname = os.path.join(DATA_PATH, fname)
+    self.alert("Connected")
+
+    with open(fname, "w") as file:
+        json.dump([], file, indent=4)
+
+    while True:
+        msg = self.recv()
+
+        if msg["type"] == "quit":
+            self.alert("Disconnected")
+            self.conn.close()
+            break
+
+        elif msg["type"] == "results":
+            with open(fname, "r") as file:
+                curr_data = json.load(file)
+            data = {"option": msg["option"], "value": msg["value"], "white": msg["white"], "black": msg["black"], "draw": msg["draw"]}
+            curr_data.append(data)
+            with open(fname, "w") as file:
+                json.dump(curr_data, file, indent=4)
 
 
 def main():
