@@ -21,11 +21,12 @@ import chess
 import pysocket
 
 IP = input("IP: ")
+EXE_PATH = "./Megalodon"
 
 
 def main():
     conn = pysocket.Client(IP, 5555, b"wemHc7uk4y8AKzFTzx2CvwrAfVBPtb2uQLhXLuKoDfY=")
-    conn.send({"type": "results", "option": "asdf", "value": 2, "white": 12, "black": 12, "draw": 12})
+    options = conn.recv()
     conn.send({"type": "quit"})
 
 

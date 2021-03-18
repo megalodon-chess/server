@@ -26,12 +26,22 @@ from hashlib import sha256
 PARENT = os.path.dirname(os.path.realpath(__file__))
 DATA_PATH = os.path.join(PARENT, "data")
 IP = input("IP: ")
+OPTIONS = (
+    "EvalMaterial",
+    "EvalCenter",
+    "EvalKing",
+    "EvalPawn",
+    "EvalKnight",
+    "EvalRook",
+)
 
 
 def start(self: pysocket.server.Client):
     fname = sha256(str(random.randint(0, 10000000000)+random.random()).encode()).hexdigest() + ".json"
     fname = os.path.join(DATA_PATH, fname)
+
     self.alert("Connected")
+    self.send(OPTIONS)
 
     with open(fname, "w") as file:
         json.dump([], file, indent=4)
