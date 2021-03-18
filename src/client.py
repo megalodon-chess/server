@@ -28,6 +28,21 @@ EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
 GAME_CNT = 100
 
 
+def play_games(option, value):
+    pass
+
+
+def start(options):
+    while True:
+        try:
+            option = random.choice(options)
+            value = random.randint(0, 1000)
+            play_games(option, value)
+        except KeyboardInterrupt:
+            print("Terminated")
+            return
+
+
 def main():
     conn = pysocket.Client(IP, 5555, b"wemHc7uk4y8AKzFTzx2CvwrAfVBPtb2uQLhXLuKoDfY=")
     options = conn.recv()
@@ -35,6 +50,7 @@ def main():
     with open(EXE_PATH, "wb") as file:
         file.write(exe)
 
+    start(options)
     conn.send({"type": "quit"})
 
 
