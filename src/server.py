@@ -54,6 +54,7 @@ def start(self: pysocket.server.Client):
 
 
 def main():
+    os.makedirs(DATA_PATH, exist_ok=True)
     server = pysocket.Server(IP, 5555, start, b"wemHc7uk4y8AKzFTzx2CvwrAfVBPtb2uQLhXLuKoDfY=")
     server.start()
 
