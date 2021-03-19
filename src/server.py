@@ -60,7 +60,8 @@ def start(self: pysocket.server.Client):
         elif msg["type"] == "results":
             with open(fname, "r") as file:
                 curr_data = json.load(file)
-            data = {"option": msg["option"], "value": msg["value"], "white": msg["white"], "black": msg["black"], "draw": msg["draw"]}
+            data = {"option": msg["option"], "side": msg["side"], "value": msg["value"], "white": msg["white"],
+                "black": msg["black"], "draw": msg["draw"]}
             curr_data.append(data)
             with open(fname, "w") as file:
                 json.dump(curr_data, file, indent=4)

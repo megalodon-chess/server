@@ -103,7 +103,7 @@ def start(conn, options):
             value = random.randint(0, 200)
             side = random.random() > 0.5
             white, black, draw = play_games(option, value, side)
-            conn.send({"type": "results", "option": option, "value": value, "white": white, "black": black, "draw": draw})
+            conn.send({"type": "results", "side": side, "option": option, "value": value, "white": white, "black": black, "draw": draw})
 
         except KeyboardInterrupt:
             print("Terminated")
