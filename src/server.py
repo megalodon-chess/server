@@ -26,6 +26,7 @@ import pysocket
 PARENT = os.path.dirname(os.path.realpath(__file__))
 DATA_PATH = os.path.join(PARENT, "data")
 RESULTS_PATH = os.path.join(PARENT, "results.json")
+EXE_PATH = os.path.join(PARENT, "Megalodon")
 IP = input("IP: ")
 
 
@@ -35,8 +36,18 @@ def result_compile():
 
 
 def start(self: pysocket.server.Client):
+    def send_exe():
+        with open(EXE_PATH, "rb") as file:
+            self.send(file.read())
+    def send_weights():
+        with open(RESULTS_PATH, "r") as file:
+            results = json.load(file)
+        self.send(results)
+
     self.alert("Connected")
     path = os.path.join(DATA_PATH, str(time.time())+".json")
+    send_exe()
+    send_weights()
 
     while True:
         msg = self.recv()
@@ -57,9 +68,8 @@ def start(self: pysocket.server.Client):
             with open(path, "w") as file:
                 json.dump(curr, file, indent=4)
 
-            with open(RESULTS_PATH, "r") as file:
-                results = json.load(file)
-            self.send(results)
+            send_exe()
+            send_weights()
 
 
 def main():
