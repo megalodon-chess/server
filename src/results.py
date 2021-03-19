@@ -48,7 +48,10 @@ def main():
 
     final = {}
     for op in OPTIONS:
-        final[op] = values[op][0] / values[op][1]
+        points = values[op][0]
+        cnt = values[op][1]
+        value = points/cnt if cnt > 0 else 100
+        final[op] = value
     with open(OUT_PATH, "w") as file:
         json.dump(final, file)
 
