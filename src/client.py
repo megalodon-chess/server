@@ -55,7 +55,6 @@ def play_game(path, num, options, weights):
     move_num = 0
     while not board.is_game_over():
         move_num += 1
-        write(f"Game {num}, move {move_num}")
         try:
             board.push(white.play(board, chess.engine.Limit(depth=DEPTH)).move)
             board.push(black.play(board, chess.engine.Limit(depth=DEPTH)).move)
