@@ -55,6 +55,8 @@ def play_game(path, num, options, weights):
     board = chess.Board()
     win = False
     move_num = 0
+    for i in range(2):
+        board.push(random.choice(list(board.generate_legal_moves())))
     while not board.is_game_over():
         move_num += 1
         try:
