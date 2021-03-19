@@ -38,12 +38,12 @@ def write(msg):
     sys.stdout.flush()
 
 
-def play_game(num, options, weights):
+def play_game(path, num, options, weights):
     option = random.choice(options)
     value = random.randint(0, 200)
 
-    white = chess.engine.SimpleEngine.popen_uci(EXE_PATH)
-    black = chess.engine.SimpleEngine.popen_uci(EXE_PATH)
+    white = chess.engine.SimpleEngine.popen_uci(path)
+    black = chess.engine.SimpleEngine.popen_uci(path)
     side = random.random() > 0.5
     if side:
         white.configure({option: value})
@@ -76,24 +76,25 @@ def play_game(num, options, weights):
 def start():
     conn = pysocket.Client(IP, 5555, b"KWiXbMpNX3DdWW1lHa7j4TLm0oYE2FlhK6jXn0cDTbU=")
     game_num = 0
+    path = EXE_PATH + str(time.time())
 
     try:
         while True:
-            if os.path.isfile(EXE_PATH):
-                os.remove(EXE_PATH)
-            with open(EXE_PATH, "wb") as file:
+            if os.path.isfile(path):
+                os.remove(path)
+            with open(path, "wb") as file:
                 file.write(conn.recv())
             options = conn.recv()
             weights = conn.recv()
-            os.system(f"chmod +x {EXE_PATH}")
+            os.system(f"chmod +x {path}")
 
             game_num += 1
-            option, value, win = play_game(game_num, options, weights)
+            option, value, win = play_game(path, game_num, options, weights)
             data = {"type": "result", "option": option, "value": value, "win": win}
             conn.send(data)
 
     except KeyboardInterrupt:
-        pass
+        os.remove(path)
 
     conn.send({"type": "quit"})
 
