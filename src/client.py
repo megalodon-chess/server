@@ -36,8 +36,8 @@ def play_games(option, value, side):
     print(f"    New value: {value}")
     print("    Tested side: {}".format("White" if side else "Black"))
 
-    white = 0
-    black = 0
+    white_win = 0
+    black_win = 0
     draw = 0
 
     for game in range(GAME_CNT):
@@ -76,9 +76,9 @@ def play_games(option, value, side):
 
             result = board.result()
             if result == "1-0":
-                white += 1
+                white_win += 1
             elif result == "0-1":
-                black += 1
+                black_win += 1
             elif result == "1/2-1/2":
                 draw += 1
 
@@ -88,7 +88,7 @@ def play_games(option, value, side):
             raise KeyboardInterrupt
 
     print()
-    return (white, black, draw)
+    return (white_win, black_win, draw)
 
 
 def start(conn, options):
