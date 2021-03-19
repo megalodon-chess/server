@@ -28,6 +28,13 @@ DATA_PATH = os.path.join(PARENT, "data")
 RESULTS_PATH = os.path.join(PARENT, "results.json")
 EXE_PATH = os.path.join(PARENT, "Megalodon")
 IP = input("IP: ")
+OPTIONS = (
+    "EvalCenter",
+    "EvalKing",
+    "EvalPawn",
+    "EvalKnight",
+    "EvalRook",
+)
 
 
 def result_compile():
@@ -39,6 +46,10 @@ def start(self: pysocket.server.Client):
     def send_exe():
         with open(EXE_PATH, "rb") as file:
             self.send(file.read())
+
+    def send_options():
+        self.send(OPTIONS)
+
     def send_weights():
         with open(RESULTS_PATH, "r") as file:
             results = json.load(file)
@@ -47,6 +58,7 @@ def start(self: pysocket.server.Client):
     self.alert("Connected")
     path = os.path.join(DATA_PATH, str(time.time())+".json")
     send_exe()
+    send_options()
     send_weights()
 
     while True:
@@ -69,6 +81,7 @@ def start(self: pysocket.server.Client):
                 json.dump(curr, file, indent=4)
 
             send_exe()
+            send_options()
             send_weights()
 
 
