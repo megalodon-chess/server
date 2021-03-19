@@ -27,6 +27,7 @@ IP = input("IP: ")
 
 
 def main():
+    os.makedirs(os.path.join(PARENT, "std"), exist_ok=True)
     num = int(input("Number of instances: "))
     procs = []
     files = []
