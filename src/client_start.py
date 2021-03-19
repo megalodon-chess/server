@@ -32,8 +32,8 @@ def main():
     files = []
 
     for i in range(num):
-        in_path = os.path.join(PARENT, f"in{i}.txt")
-        out_path = os.path.join(PARENT, f"out{i}.txt")
+        in_path = os.path.join(PARENT, "std", f"in{i}.txt")
+        out_path = os.path.join(PARENT, "std", f"out{i}.txt")
         with open(in_path, "w") as file:
             file.write(f"{IP}\n")
             file.write("y" if i == 0 else "n")
