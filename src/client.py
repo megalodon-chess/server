@@ -44,6 +44,8 @@ def play_game(path, num, options, weights):
 
     white = chess.engine.SimpleEngine.popen_uci(path)
     black = chess.engine.SimpleEngine.popen_uci(path)
+    white.configure(options)
+    black.configure(options)
     side = random.random() > 0.5
     if side:
         white.configure({option: value})
