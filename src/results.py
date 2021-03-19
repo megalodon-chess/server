@@ -57,7 +57,7 @@ def main():
         value = points/cnt if cnt > 0 else 100
         final[op] = value
     with open(OUT_PATH, "w") as file:
-        json.dump(final, file)
+        json.dump(final, file, indent=4)
 
 
 main()
