@@ -86,6 +86,7 @@ def start(self: pysocket.server.Client):
 
 
 def main():
+    os.makedirs(DATA_PATH, exist_ok=True)
     threading.Thread(target=result_compile).start()
     server = pysocket.Server(IP, 5555, start, b"KWiXbMpNX3DdWW1lHa7j4TLm0oYE2FlhK6jXn0cDTbU=")
     server.start()
