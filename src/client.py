@@ -103,6 +103,7 @@ def main():
     cores = int(input("Number of threads: "))
     for i in range(cores):
         multiprocessing.Process(target=start).start()
+        time.sleep(0.01)
 
 
 main()
