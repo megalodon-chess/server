@@ -37,9 +37,47 @@ OPTIONS = (
 )
 
 
+def total_loss(results, value):
+    loss = 0
+    for r in results:
+        if r["win"]:
+            loss += 100 - abs(value - r["value"])
+        else:
+            loss += abs(value - r["value"])
+
+    return loss
+
+
+def best_val(results):
+    if len(results) == 0:
+        return 100
+
+    best = 0
+    min_loss = float("inf")
+    for i in range(1000):
+        loss = total_loss(results, i)
+        if loss < min_loss:
+            min_loss = loss
+            best = i
+
+    return i
+
+
 def result_compile():
-    with open(RESULTS_PATH, "w") as file:
-        file.write("{}")
+    while True:
+        time.sleep(120)
+        print("Compiling results.")
+
+        results = []
+        for file in os.listdir(DATA_PATH):
+            with open(os.path.join(DATA_PATH, file), "r") as file:
+                results.extend(json.load(file))
+
+        final = {}
+        for op in OPTIONS:
+            final[op] = best_val([r for r in results if r["option"] == op])
+        with open(RESULTS_PATH, "w") as file:
+            json.dump(final, file)
 
 
 def start(self: pysocket.server.Client):
