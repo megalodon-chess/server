@@ -18,13 +18,44 @@
 #
 
 import os
+import random
 import chess
 import chess.engine
 import pysocket
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
-EXE_PATH = os.path.join(PARENT, "Megalodon")
+EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
 IP = input("IP: ")
+DEPTH = 4
+
+
+def play_game(options, weights):
+    option = random.choice(options)
+    value = random.randint(0, 200)
+
+    white = chess.engine.SimpleEngine.popen_uci(EXE_PATH)
+    black = chess.engine.SimpleEngine.popen_uci(EXE_PATH)
+    side = random.random() > 0.5
+    if side:
+        white.configure({option: value})
+    else:
+        black.configure({option: value})
+
+    board = chess.Board()
+    win = False
+    while not board.is_game_over():
+        try:
+            board.push(white.play(board, chess.engine.Limit(depth=DEPTH)).move)
+            board.push(black.play(board, chess.engine.Limit(depth=DEPTH)).move)
+        except chess.engine.EngineError:
+            break
+    result = board.result()
+    if result == "1-0" and side == True:
+        win = True
+    if result == "0-1" and side == False:
+        win = True
+
+    return (option, value, win)
 
 
 def main():
@@ -34,9 +65,13 @@ def main():
         while True:
             with open(EXE_PATH, "wb") as file:
                 file.write(conn.recv())
+            options = conn.recv()
             weights = conn.recv()
-            print(weights)
-            break
+            os.system(f"chmod +x {EXE_PATH}")
+
+            option, value, win = play_game(options, weights)
+            data = {"option": option, "value": value, "win": win}
+            conn.send(data)
 
     except KeyboardInterrupt:
         pass
