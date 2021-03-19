@@ -38,13 +38,17 @@ def main():
     for op in OPTIONS:
         values[op] = [0, 0]
 
+    count = 0
     for file in os.listdir(DATA_PATH):
         with open(os.path.join(DATA_PATH, file), "r") as file:
             data = json.load(file)
-        if data["option"] in OPTIONS:
-            num = data["white"] if data["side"] else data["black"]
-            values[data["option"]][0] += num * data["value"]
-            values[data["option"]][1] += num
+        if len(data) > 0:
+            count += 1
+            if data["option"] in OPTIONS:
+                num = data["white"] if data["side"] else data["black"]
+                values[data["option"]][0] += num * data["value"]
+                values[data["option"]][1] += num
+    print(f"Loaded {count} non-empty files.")
 
     final = {}
     for op in OPTIONS:
