@@ -29,6 +29,11 @@ RESULTS_PATH = os.path.join(PARENT, "results.json")
 IP = input("IP: ")
 
 
+def result_compile():
+    with open(RESULTS_PATH, "w") as file:
+        file.write("{{}}")
+
+
 def start(self: pysocket.server.Client):
     self.alert("Connected")
     path = os.path.join(DATA_PATH, str(time.time())+".json")
@@ -50,7 +55,7 @@ def start(self: pysocket.server.Client):
             else:
                 curr = [data]
             with open(path, "w") as file:
-                json.dump(curr, file)
+                json.dump(curr, file, indent=4)
 
             with open(RESULTS_PATH, "r") as file:
                 results = json.load(file)
@@ -58,6 +63,7 @@ def start(self: pysocket.server.Client):
 
 
 def main():
+    threading.Thread(target=result_compile).start()
     server = pysocket.Server(IP, 5555, start, b"KWiXbMpNX3DdWW1lHa7j4TLm0oYE2FlhK6jXn0cDTbU=")
     server.start()
 
