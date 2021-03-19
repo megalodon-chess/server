@@ -59,7 +59,6 @@ def play_game(num, options, weights):
             board.push(black.play(board, chess.engine.Limit(depth=DEPTH)).move)
         except chess.engine.EngineError:
             break
-    write("\n")
     white.close()
     black.close()
 
