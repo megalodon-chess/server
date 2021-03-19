@@ -17,6 +17,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import sys
 import os
 import random
 import chess
@@ -29,7 +30,13 @@ IP = input("IP: ")
 DEPTH = 4
 
 
-def play_game(options, weights):
+def write(msg):
+    sys.stdout.write("\r"+" "*60+"\r")
+    sys.stdout.write(msg)
+    sys.stdout.flush()
+
+
+def play_game(num, options, weights):
     option = random.choice(options)
     value = random.randint(0, 200)
 
@@ -43,12 +50,16 @@ def play_game(options, weights):
 
     board = chess.Board()
     win = False
+    move_num = 0
     while not board.is_game_over():
+        move_num += 1
+        write(f"Game {num}, move {move_num}")
         try:
             board.push(white.play(board, chess.engine.Limit(depth=DEPTH)).move)
             board.push(black.play(board, chess.engine.Limit(depth=DEPTH)).move)
         except chess.engine.EngineError:
             break
+    write("\n")
     result = board.result()
     if result == "1-0" and side == True:
         win = True
@@ -60,6 +71,7 @@ def play_game(options, weights):
 
 def main():
     conn = pysocket.Client(IP, 5555, b"KWiXbMpNX3DdWW1lHa7j4TLm0oYE2FlhK6jXn0cDTbU=")
+    game_num = 0
 
     try:
         while True:
@@ -69,7 +81,8 @@ def main():
             weights = conn.recv()
             os.system(f"chmod +x {EXE_PATH}")
 
-            option, value, win = play_game(options, weights)
+            game_num += 1
+            option, value, win = play_game(game_num, options, weights)
             data = {"option": option, "value": value, "win": win}
             conn.send(data)
 
