@@ -18,12 +18,14 @@
 #
 
 import os
+import threading
 import time
 import json
 import pysocket
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
 DATA_PATH = os.path.join(PARENT, "data")
+RESULTS_PATH = os.path.join(PARENT, "results.json")
 IP = input("IP: ")
 
 
@@ -35,6 +37,7 @@ def start(self: pysocket.server.Client):
         msg = self.recv()
 
         if msg["type"] == "quit":
+            self.alert("Disconnected")
             self.conn.close()
             break
 
@@ -48,6 +51,10 @@ def start(self: pysocket.server.Client):
                 curr = [data]
             with open(path, "w") as file:
                 json.dump(curr, file)
+
+            with open(RESULTS_PATH, "r") as file:
+                results = json.load(file)
+            self.send(results)
 
 
 def main():
