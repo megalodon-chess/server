@@ -64,6 +64,10 @@ def best_val(results):
 
 
 def result_compile():
+    if not os.path.isfile(RESULTS_PATH):
+        with open(RESULTS_PATH, "w") as file:
+            file.write("{}")
+
     while True:
         time.sleep(120)
         print("Compiling results.")
