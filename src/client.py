@@ -28,7 +28,7 @@ PARENT = os.path.dirname(os.path.realpath(__file__))
 IP = input("IP: ")
 EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
 GAME_CNT = 10
-DEPTH = 5
+DEPTH = 4
 
 
 def play_games(option, value, side):
