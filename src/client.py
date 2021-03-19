@@ -114,9 +114,10 @@ def main():
     conn = pysocket.Client(IP, 5555, b"wemHc7uk4y8AKzFTzx2CvwrAfVBPtb2uQLhXLuKoDfY=")
     options = conn.recv()
     exe = conn.recv()
-    with open(EXE_PATH, "wb") as file:
-        file.write(exe)
-    os.system(f"chmod +x {EXE_PATH}")
+    if input("Overwrite current executable? (y/N) ").lower().strip() == "y":
+        with open(EXE_PATH, "wb") as file:
+            file.write(exe)
+        os.system(f"chmod +x {EXE_PATH}")
 
     start(conn, options)
     conn.send({"type": "quit"})
