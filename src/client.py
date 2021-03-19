@@ -27,14 +27,18 @@ import pysocket
 PARENT = os.path.dirname(os.path.realpath(__file__))
 IP = input("IP: ")
 EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
-GAME_CNT = 100
-DEPTH = 3
+GAME_CNT = 10
+DEPTH = 5
 
 
 def play_games(option, value, side):
     print(f"    Tested option: {option}")
     print(f"    New value: {value}")
     print("    Tested side: {}".format("White" if side else "Black"))
+
+    white = 0
+    black = 0
+    draw = 0
 
     for game in range(GAME_CNT):
         try:
@@ -70,15 +74,24 @@ def play_games(option, value, side):
             sys.stdout.write(f"Playing game {game+1}: Finished")
             sys.stdout.flush()
 
+            result = board.result()
+            if result == "1-0":
+                white += 1
+            elif result == "0-1":
+                black += 1
+            elif result == "1/2-1/2":
+                draw += 1
+
         except KeyboardInterrupt:
             white.close()
             black.close()
             raise KeyboardInterrupt
 
     print()
+    return (white, black, draw)
 
 
-def start(options):
+def start(conn, options):
     match = 0
 
     while True:
@@ -89,7 +102,8 @@ def start(options):
             option = random.choice(options)
             value = random.randint(0, 1000)
             side = random.random() > 0.5
-            play_games(option, value, side)
+            white, black, draw = play_games(option, value, side)
+            conn.send({"type": "results", "option": option, "value": value, "white": white, "black": black, "draw": draw})
 
         except KeyboardInterrupt:
             print("Terminated")
@@ -104,7 +118,7 @@ def main():
         file.write(exe)
     os.system(f"chmod +x {EXE_PATH}")
 
-    start(options)
+    start(conn, options)
     conn.send({"type": "quit"})
 
 
