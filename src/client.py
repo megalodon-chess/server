@@ -60,6 +60,9 @@ def play_game(num, options, weights):
         except chess.engine.EngineError:
             break
     write("\n")
+    white.close()
+    black.close()
+
     result = board.result()
     if result == "1-0" and side == True:
         win = True
