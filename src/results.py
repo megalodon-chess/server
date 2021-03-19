@@ -59,6 +59,8 @@ def main():
         final[op] = value
     with open(OUT_PATH, "w") as file:
         json.dump(final, file, indent=4)
+    print("Final weights:")
+    print(json.dumps(final, indent=4))
 
 
 main()
