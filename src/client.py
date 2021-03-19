@@ -30,12 +30,16 @@ IP = input("IP: ")
 def main():
     conn = pysocket.Client(IP, 5555, b"KWiXbMpNX3DdWW1lHa7j4TLm0oYE2FlhK6jXn0cDTbU=")
 
-    while True:
-        with open(EXE_PATH, "wb") as file:
-            file.write(conn.recv())
-        weights = conn.recv()
-        print(weights)
-        break
+    try:
+        while True:
+            with open(EXE_PATH, "wb") as file:
+                file.write(conn.recv())
+            weights = conn.recv()
+            print(weights)
+            break
+
+    except KeyboardInterrupt:
+        pass
 
     conn.send({"type": "quit"})
 

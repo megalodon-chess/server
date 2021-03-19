@@ -32,7 +32,7 @@ IP = input("IP: ")
 
 def result_compile():
     with open(RESULTS_PATH, "w") as file:
-        file.write("{{}}")
+        file.write("{}")
 
 
 def start(self: pysocket.server.Client):
