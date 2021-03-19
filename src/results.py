@@ -46,5 +46,11 @@ def main():
             values[data["option"]][0] += num * data["value"]
             values[data["option"]][1] += num
 
+    final = {}
+    for op in OPTIONS:
+        final[op] = values[op][0] / values[op][1]
+    with open(OUT_PATH, "w") as file:
+        json.dump(final, file)
+
 
 main()
