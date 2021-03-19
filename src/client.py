@@ -27,7 +27,7 @@ import pysocket
 PARENT = os.path.dirname(os.path.realpath(__file__))
 EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
 IP = input("IP: ")
-DEPTH = 4
+DEPTH = 3
 
 
 def write(msg):
@@ -78,6 +78,8 @@ def main():
 
     try:
         while True:
+            if os.path.isfile(EXE_PATH):
+                os.remove(EXE_PATH)
             with open(EXE_PATH, "wb") as file:
                 file.write(conn.recv())
             options = conn.recv()
@@ -86,7 +88,7 @@ def main():
 
             game_num += 1
             option, value, win = play_game(game_num, options, weights)
-            data = {"option": option, "value": value, "win": win}
+            data = {"type": "result", "option": option, "value": value, "win": win}
             conn.send(data)
 
     except KeyboardInterrupt:
