@@ -22,6 +22,7 @@ import json
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
 DATA_PATH = os.path.join(PARENT, "data")
+OUT_PATH = os.path.join(PARENT, "results.json")
 OPTIONS = (
     "EvalMaterial",
     "EvalCenter",
@@ -33,7 +34,17 @@ OPTIONS = (
 
 
 def main():
-    pass
+    values = {}
+    for op in OPTIONS:
+        values[op] = [0, 0]
+
+    for file in os.listdir(DATA_PATH):
+        with open(os.path.join(DATA_PATH, file), "r") as file:
+            data = json.load(file)
+        if data["option"] in OPTIONS:
+            num = data["white"] if data["side"] else data["black"]
+            values[data["option"]][0] += num * data["value"]
+            values[data["option"]][1] += num
 
 
 main()
