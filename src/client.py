@@ -19,7 +19,9 @@
 
 import sys
 import os
+import time
 import random
+import multiprocessing
 import chess
 import chess.engine
 import pysocket
@@ -27,7 +29,7 @@ import pysocket
 PARENT = os.path.dirname(os.path.realpath(__file__))
 EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
 IP = input("IP: ")
-DEPTH = 3
+DEPTH = 4
 
 
 def write(msg):
@@ -71,7 +73,7 @@ def play_game(num, options, weights):
     return (option, value, win)
 
 
-def main():
+def start():
     conn = pysocket.Client(IP, 5555, b"KWiXbMpNX3DdWW1lHa7j4TLm0oYE2FlhK6jXn0cDTbU=")
     game_num = 0
 
@@ -94,6 +96,12 @@ def main():
         pass
 
     conn.send({"type": "quit"})
+
+
+def main():
+    cores = int(input("Number of threads: "))
+    for i in range(cores):
+        multiprocessing.Process(target=start).start()
 
 
 main()
