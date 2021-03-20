@@ -84,6 +84,7 @@ def result_compile():
         with open(RESULTS_PATH, "w") as file:
             json.dump(final, file, indent=4)
         print(json.dumps(final, indent=4))
+        print(f"Total {len(results)} games.")
 
 
 def start(self: pysocket.server.Client):
