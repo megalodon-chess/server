@@ -115,21 +115,21 @@ def start(self: pysocket.server.Client):
             break
 
         elif msg["type"] == "result":
-            data = {"option": msg["option"], "value": msg["value"], "win": msg["win"]}
-            if os.path.isfile(path):
-                with open(path, "r") as file:
-                    curr = json.load(file)
-                curr.append(data)
-            else:
-                curr = [data]
-            with open(path, "w") as file:
-                json.dump(curr, file, indent=4)
+            if msg["success"]:
+                data = {"option": msg["option"], "value": msg["value"], "win": msg["win"]}
+                if os.path.isfile(path):
+                    with open(path, "r") as file:
+                        curr = json.load(file)
+                    curr.append(data)
+                else:
+                    curr = [data]
+                with open(path, "w") as file:
+                    json.dump(curr, file, indent=4)
+                self.alert(f"Sent result: {data}")
 
             send_exe()
             send_options()
             send_weights()
-
-            self.alert(f"Sent result: {data}")
 
 
 def main():

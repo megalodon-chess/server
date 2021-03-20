@@ -62,7 +62,7 @@ def play_game(path, options, weights):
             board.push(black.play(board, chess.engine.Limit(depth=DEPTH)).move)
         except chess.engine.EngineError:
             print("Engine error! Aborting game.")
-            break
+            return (False, None, None, None)
     white.close()
     black.close()
 
@@ -72,7 +72,7 @@ def play_game(path, options, weights):
     if result == "0-1" and side == False:
         win = True
 
-    return (option, value, win)
+    return (True, option, value, win)
 
 
 def start():
@@ -89,8 +89,8 @@ def start():
             weights = conn.recv()
             os.system(f"chmod +x {path}")
 
-            option, value, win = play_game(path, options, weights)
-            data = {"type": "result", "option": option, "value": value, "win": win}
+            success, option, value, win = play_game(path, options, weights)
+            data = {"type": "result", "success": success, "option": option, "value": value, "win": win}
             conn.send(data)
             print(f"Sent result: {data}")
 
