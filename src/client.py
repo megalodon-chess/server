@@ -95,6 +95,7 @@ def start():
             option, value, win = play_game(path, game_num, options, weights)
             data = {"type": "result", "option": option, "value": value, "win": win}
             conn.send(data)
+            print(f"Sent result: {data}")
 
     except KeyboardInterrupt:
         os.remove(path)
