@@ -29,7 +29,7 @@ import pysocket
 PARENT = os.path.dirname(os.path.realpath(__file__))
 EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
 IP = input("IP: ")
-DEPTH = 4
+DEPTH = 3
 
 
 def write(msg):
@@ -38,7 +38,7 @@ def write(msg):
     sys.stdout.flush()
 
 
-def play_game(path, num, options, weights):
+def play_game(path, options, weights):
     option = random.choice(options)
     value = random.randint(0, 200)
 
@@ -54,11 +54,9 @@ def play_game(path, num, options, weights):
 
     board = chess.Board()
     win = False
-    move_num = 0
     for i in range(2):
         board.push(random.choice(list(board.generate_legal_moves())))
     while not board.is_game_over():
-        move_num += 1
         try:
             board.push(white.play(board, chess.engine.Limit(depth=DEPTH)).move)
             board.push(black.play(board, chess.engine.Limit(depth=DEPTH)).move)
@@ -78,7 +76,6 @@ def play_game(path, num, options, weights):
 
 def start():
     conn = pysocket.Client(IP, 5555, b"KWiXbMpNX3DdWW1lHa7j4TLm0oYE2FlhK6jXn0cDTbU=")
-    game_num = 0
     path = EXE_PATH + str(time.time())
 
     try:
@@ -91,8 +88,7 @@ def start():
             weights = conn.recv()
             os.system(f"chmod +x {path}")
 
-            game_num += 1
-            option, value, win = play_game(path, game_num, options, weights)
+            option, value, win = play_game(path, options, weights)
             data = {"type": "result", "option": option, "value": value, "win": win}
             conn.send(data)
             print(f"Sent result: {data}")
