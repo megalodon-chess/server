@@ -35,13 +35,14 @@ OPTIONS = (
     "EvalKnight",
     "EvalRook",
 )
+COMP_INC = 600
 
 
 def total_loss(results, value):
     loss = 0
     for r in results:
         if r["win"]:
-            loss += 100 - abs(value - r["value"])
+            loss += 1000 - abs(value - r["value"])
         else:
             loss += abs(value - r["value"])
 
@@ -60,7 +61,7 @@ def best_val(results):
             min_loss = loss
             best = i
 
-    return i
+    return best
 
 
 def result_compile():
@@ -69,7 +70,6 @@ def result_compile():
             file.write("{}")
 
     while True:
-        time.sleep(120)
         print("Compiling results.")
 
         results = []
@@ -82,6 +82,8 @@ def result_compile():
             final[op] = best_val([r for r in results if r["option"] == op])
         with open(RESULTS_PATH, "w") as file:
             json.dump(final, file)
+
+        time.sleep(COMP_INC)
 
 
 def start(self: pysocket.server.Client):
