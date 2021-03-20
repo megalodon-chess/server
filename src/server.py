@@ -70,6 +70,7 @@ def result_compile():
             file.write("{}")
 
     while True:
+        time.sleep(COMP_INC)
         print("Compiling results.")
 
         results = []
@@ -81,9 +82,8 @@ def result_compile():
         for op in OPTIONS:
             final[op] = best_val([r for r in results if r["option"] == op])
         with open(RESULTS_PATH, "w") as file:
-            json.dump(final, file)
-
-        time.sleep(COMP_INC)
+            json.dump(final, file, indent=4)
+        print(json.dumps(final, indent=4))
 
 
 def start(self: pysocket.server.Client):
@@ -127,6 +127,8 @@ def start(self: pysocket.server.Client):
             send_exe()
             send_options()
             send_weights()
+
+            self.alert(f"Sent result: {data}")
 
 
 def main():
