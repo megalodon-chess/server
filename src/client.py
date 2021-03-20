@@ -61,6 +61,7 @@ def play_game(path, options, weights):
             board.push(white.play(board, chess.engine.Limit(depth=DEPTH)).move)
             board.push(black.play(board, chess.engine.Limit(depth=DEPTH)).move)
         except chess.engine.EngineError:
+            print("Engine error! Aborting game.")
             break
     white.close()
     black.close()
