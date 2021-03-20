@@ -107,6 +107,7 @@ def main():
     for i in range(cores):
         multiprocessing.Process(target=start).start()
         time.sleep(0.01)
+    print("Press Ctrl+C to stop.")
 
 
 main()
