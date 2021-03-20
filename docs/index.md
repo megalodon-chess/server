@@ -9,23 +9,17 @@ you to use your CPU and run one of the tests.
 
 ## How To Use
 
-Download the client Python file (`client.py`) from any of the tests.
+Download the client Python file (`src/client.py`).
+You will need Python 3 and packages defined in `requirements.txt`
 
-The tests are separated into folders in the main directory.
+Run the client file, and enter the IP address defined below.
 
-Python package requirements are in `requirements.txt`.
-
-All tests will ask for a server IP address via stdin.
-Please read the section **Server IP** for more information.
+Next, enter the number of cores you wish to use.
+The more cores you use, the more games you will contribute,
+but your computer will become slower.
 
 ## Server IP
 
 There is currently no official server for Sharktest.
 
 The Megalodon team will start hosting a server on March 28, 2021.
-
-## Current Tests
-
-### Movegen
-
-This is for testing Megalodon's move generation accuracy.
