@@ -29,7 +29,7 @@ import pysocket
 PARENT = os.path.dirname(os.path.realpath(__file__))
 EXE_PATH = os.path.join(PARENT, "Megalodon-Sharktest")
 IP = input("IP: ")
-DEPTH = 3
+DEPTH = 4
 
 
 def write(msg):
