@@ -33,6 +33,14 @@ ENC_KEY = data["enc_key"].encode()
 def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
     self.alert("Connected")
 
+    while True:
+        msg = self.recv()
+
+        if msg["type"] == "quit":
+            self.quit()
+            self.alert("Disconnected")
+            break
+
 
 def main():
     os.makedirs(DATA_PATH, exist_ok=True)
