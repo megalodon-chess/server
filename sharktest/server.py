@@ -51,7 +51,19 @@ def stats(dataman: pysocket.DataMan):
                 if cmd["ip"] in data["clients"]:
                     data["clients"][cmd["ip"]]["requests"] += 1
                 else:
-                    data["clients"][cmd["ip"]] = {"requests": 1}
+                    data["clients"][cmd["ip"]] = {"requests": 1, "games": 0, "keys": 0}
+                dataman.dump(data, "stats.json")
+
+            elif cmd["type"] == "newkey":
+                data = dataman.load("stats.json")
+                if cmd["ip"] in data["clients"]:
+                    data["clients"][cmd["ip"]]["keys"] += 1
+                dataman.dump(data, "stats.json")
+
+            elif cmd["type"] == "gameresult":
+                data = dataman.load("stats.json")
+                if cmd["ip"] in data["clients"]:
+                    data["clients"][cmd["ip"]]["games"] += 1
                 dataman.dump(data, "stats.json")
 
 
@@ -91,6 +103,7 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
                     key = "".join(random.choices("0123456789abcdef", k=16))
                 dataman.dump({"key": key, "used": 0, "limit": 1000, "ip_create": self.addr[0]}, f"keys/{key}.json")
                 self.send({"success": True, "key": key})
+                dataman.queue.append({"type": "newkey", "ip": self.addr[0]})
             else:
                 self.send({"success": False})
 
