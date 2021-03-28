@@ -111,6 +111,11 @@ def play_games(conn, key):
             print()
             print()
 
+            conn.send({"type": "result", "key": key, "opt": opt, "value": value})
+            if not conn.recv()["success"]:
+                print("Key used too many times. Please create a new one.")
+                return
+
         except KeyboardInterrupt:
             engine.close()
             raise KeyboardInterrupt
