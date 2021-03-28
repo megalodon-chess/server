@@ -24,6 +24,7 @@ import random
 import string
 import json
 import pysocket
+from hashlib import sha256
 from captcha.image import ImageCaptcha
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
@@ -91,7 +92,7 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
                 self.send({"exists": False})
 
         elif msg["type"] == "newkey":
-            font = os.path.join(DATA_PATH, "font.ttf")
+            font = os.path.join(DATA_PATH, "datafiles", "font.ttf")
             captcha = ImageCaptcha(fonts=[font], width=640, height=240)
             text = "".join(random.choices(string.ascii_lowercase, k=6))
             data = captcha.generate(text).read()
@@ -104,6 +105,15 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
                 dataman.dump({"key": key, "used": 0, "limit": 1000, "ip_create": self.addr[0]}, f"keys/{key}.json")
                 self.send({"success": True, "key": key})
                 dataman.queue.append({"type": "newkey", "ip": self.addr[0]})
+            else:
+                self.send({"success": False})
+
+        elif msg["type"] == "getexe":
+            if dataman.isfile("datafiles/Megalodon") and dataman.isfile("datafiles/options.json"):
+                data = dataman.read("datafiles/Megalodon", mode="rb")
+                digest = sha256(data).hexdigest()
+                options = dataman.load("datafiles/options.json")
+                self.send({"success": True, "exe": data, "digest": digest, "options": options})
             else:
                 self.send({"success": False})
 
