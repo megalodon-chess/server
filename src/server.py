@@ -58,9 +58,9 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
             reply = self.recv()
             if reply == text:
                 key = "".join(random.choices("0123456789abcdef", k=16))
-                while dataman.isfile(f"keys/{key}"):
+                while dataman.isfile(f"keys/{key}.json"):
                     key = "".join(random.choices("0123456789abcdef", k=16))
-                dataman.write("0", f"keys/{key}")
+                dataman.dump({"key": key, "used": 0, "ip_create": self.addr[0]}, f"keys/{key}.json")
                 self.send({"success": True, "key": key})
             else:
                 self.send({"success": False})
