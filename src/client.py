@@ -20,6 +20,8 @@
 import os
 import json
 import pysocket
+import chess
+import chess.engine
 from tkinter import Tk
 from tkinter.filedialog import asksaveasfilename
 Tk().withdraw()
@@ -41,6 +43,10 @@ else:
         json.dump({"ip": IP, "port": PORT, "enc_key": ENC_KEY.decode()}, file, indent=4)
 
 
+def play_games(conn, key, i):
+    pass
+
+
 def main():
     conn = pysocket.Client(IP, PORT, ENC_KEY)
     conn.send({"type": "isready"})
@@ -51,10 +57,19 @@ def main():
     try:
         if input("Do you have a sharktest key? (y/N) ").lower().strip() == "y":
             key = input("Sharktest key: ")
+            conn.send({"type": "keyinfo", "key": key})
+            reply = conn.recv()
+            print("Key information:")
+            print("- Key exists: "+str(reply["exists"]))
+            if reply["exists"]:
+                print("- Results uploaded: "+str(reply["used"]))
+                print("- Results limit: "+str(reply["limit"]))
+                print("- Results remaining: "+str(reply["limit"]-reply["used"]))
+                print("- You created this key: "+str(reply["you_own"]))
         else:
             print("To prevent false results, we require testers to solve a CAPTCHA.")
             input("Press enter to download and save a CAPTCHA image as PNG. Press Ctrl+C and Enter to quit.")
-            conn.send({"type": "get_key"})
+            conn.send({"type": "newkey"})
             data = conn.recv()
             with open(asksaveasfilename(), "wb") as file:
                 file.write(data)
@@ -63,10 +78,14 @@ def main():
             reply = conn.recv()
             if reply["success"]:
                 print("Success! Your Sharktest key is {}".format(reply["key"]))
+                print("You can upload 1000 results with this key, and you will need to generate a new one after that.")
+                key = reply["key"]
             else:
                 print("Validation failed.")
                 conn.send({"type": "quit"})
                 return
+
+        play_games(conn, key, 0)
 
     except KeyboardInterrupt:
         pass

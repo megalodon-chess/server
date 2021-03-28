@@ -49,7 +49,14 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
         elif msg["type"] == "isready":
             self.send({"ready": True})
 
-        elif msg["type"] == "get_key":
+        elif msg["type"] == "keyinfo":
+            if dataman.isfile("keys/{}.json".format(msg["key"])):
+                data = dataman.load("keys/{}.json".format(msg["key"]))
+                self.send({"exists": True, "used": data["used"], "limit": data["limit"], "you_own": data["ip_create"] == self.addr[0]})
+            else:
+                self.send({"exists": False})
+
+        elif msg["type"] == "newkey":
             font = os.path.join(DATA_PATH, "font.ttf")
             captcha = ImageCaptcha(fonts=[font], width=640, height=240)
             text = "".join(random.choices(string.ascii_lowercase, k=6))
@@ -60,7 +67,7 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
                 key = "".join(random.choices("0123456789abcdef", k=16))
                 while dataman.isfile(f"keys/{key}.json"):
                     key = "".join(random.choices("0123456789abcdef", k=16))
-                dataman.dump({"key": key, "used": 0, "ip_create": self.addr[0]}, f"keys/{key}.json")
+                dataman.dump({"key": key, "used": 0, "limit": 1000, "ip_create": self.addr[0]}, f"keys/{key}.json")
                 self.send({"success": True, "key": key})
             else:
                 self.send({"success": False})
