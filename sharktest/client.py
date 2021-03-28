@@ -31,7 +31,7 @@ from tkinter.filedialog import asksaveasfilename
 Tk().withdraw()
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
-DEPTH = 4
+TIME = 1
 if os.path.isfile(os.path.join(PARENT, "settings.json")):
     with open(os.path.join(PARENT, "settings.json"), "r") as file:
         data = json.load(file)
@@ -100,12 +100,11 @@ def play_games(conn, key):
             engine = chess.engine.SimpleEngine.popen_uci(data["path"])
             board = chess.Board()
             while not board.is_game_over():
-                elapse = time.time() - start
-                write(f"Playing ply {len(board.move_stack)+1}. {elapse} seconds elapsed.")
+                write(f"Playing ply {len(board.move_stack)+1}.")
                 engine.configure(config)
                 if board.turn == side:
                     engine.configure({opt: value})
-                board.push(engine.play(board, chess.engine.Limit(depth=DEPTH)).move)
+                board.push(engine.play(board, chess.engine.Limit(time=TIME)).move)
             elapse = time.time() - start
             write(f"Game finished in {len(board.move_stack)} moves. Result is {board.result()}. {elapse} seconds elapsed.")
             engine.quit()
