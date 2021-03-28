@@ -57,7 +57,11 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
             self.send(data)
             reply = self.recv()
             if reply == text:
-                self.send({"success": True})
+                key = "".join(random.choices("0123456789abcdef", k=16))
+                while dataman.isfile(f"keys/{key}"):
+                    key = "".join(random.choices("0123456789abcdef", k=16))
+                dataman.write("0", f"keys/{key}")
+                self.send({"success": True, "key": key})
             else:
                 self.send({"success": False})
 
@@ -65,6 +69,7 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
 def main():
     os.makedirs(DATA_PATH, exist_ok=True)
     dataman = pysocket.DataMan(DATA_PATH)
+    dataman.makedirs("keys", True)
     server = pysocket.Server(IP, PORT, start, ENC_KEY, args=(dataman,))
     server.start()
 

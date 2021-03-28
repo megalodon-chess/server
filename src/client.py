@@ -62,7 +62,7 @@ def main():
             conn.send(text)
             reply = conn.recv()
             if reply["success"]:
-                print("Success!")
+                print("Success! Your Sharktest key is {}".format(reply["key"]))
             else:
                 print("Validation failed.")
                 return
