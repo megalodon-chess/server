@@ -25,10 +25,13 @@ import json
 import pysocket
 import chess
 import chess.engine
+import colorama
+from colorama import Fore
 from hashlib import sha256
 from tkinter import Tk
 from tkinter.filedialog import asksaveasfilename
 Tk().withdraw()
+colorama.init()
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
 TIME = 1
@@ -59,20 +62,20 @@ def download_exe(conn):
     conn.send({"type": "getexe"})
     data = conn.recv()
     if data["success"]:
-        print("Build hash: {}".format(data["digest"]))
+        print("Build hash: {}{}{}".format(Fore.GREEN, data["digest"], Fore.RESET))
         print("Options:")
         for i in data["options"]:
-            print(f"- {i}")
+            print(f"{Fore.BLUE}-{Fore.RESET} {i}")
         if sha256(data["exe"]).hexdigest() != data["digest"]:
-            print("Invalid hash. Aborting.")
+            print(f"{Fore.RED}Invalid executable hash. Aborting.{Fore.RESET}")
             return {"status": False}
         path = os.path.join(PARENT, "Megalodon-Sharktest")
-        print(f"Saving executable to {path}")
+        print(f"Saving executable to {Fore.GREEN}{path}{Fore.RESET}")
         with open(path, "wb") as file:
             file.write(data["exe"])
         os.system(f"chmod +x {path}")
     else:
-        print("The server encountered an error. Please try again later.")
+        print(f"{Fore.RED}The server encountered an error. Please try again later.{Fore.RESET}")
         return {"status": False}
 
     return {"status": True, "options": data["options"], "path": path}
@@ -91,7 +94,7 @@ def play_games(conn, key):
         value = random.randint(options[opt]["min"], options[opt]["max"])
         config = {o: options[o]["default"] for o in options}
         game_num += 1
-        print(f"Playing game {game_num}.")
+        print(f"Playing game {Fore.BLUE}{game_num}{Fore.RESET}.")
         print(f"- Tested option: {opt}")
         print(f"- New value: {value}")
 
@@ -106,14 +109,15 @@ def play_games(conn, key):
                     engine.configure({opt: value})
                 board.push(engine.play(board, chess.engine.Limit(time=TIME)).move)
             elapse = time.time() - start
-            write(f"Game finished in {len(board.move_stack)} moves. Result is {board.result()}. {elapse} seconds elapsed.")
+            write(f"Game finished in {Fore.BLUE}{len(board.move_stack)}{Fore.RESET} plies. Result is {Fore.BLUE}{board.result()}{Fore.RESET}." + \
+                f"{Fore.BLUE}{elapse}{Fore.RESET} seconds elapsed.")
             engine.quit()
             print()
             print()
 
             conn.send({"type": "result", "key": key, "opt": opt, "value": value})
             if not conn.recv()["success"]:
-                print("Key used too many times. Please create a new one.")
+                print(f"{Fore.RED}Key used too many times. Please create a new one.{Fore.RESET}")
                 return
 
         except KeyboardInterrupt:
@@ -125,7 +129,7 @@ def main():
     conn = pysocket.Client(IP, PORT, ENC_KEY)
     conn.send({"type": "isready"})
     if not conn.recv()["ready"]:
-        print("The server is encountering errors. Please try again later.")
+        print(f"{Fore.RED}The server is encountering errors. Please try again later.{Fore.RESET}")
         return
 
     try:
@@ -134,12 +138,12 @@ def main():
             conn.send({"type": "keyinfo", "key": key})
             reply = conn.recv()
             print("Key information:")
-            print("- Key exists: "+str(reply["exists"]))
+            print(f"- {Fore.BLUE}Key exists:{Fore.RESET} "+str(reply["exists"]))
             if reply["exists"]:
-                print("- Results uploaded: "+str(reply["used"]))
-                print("- Results limit: "+str(reply["limit"]))
-                print("- Results remaining: "+str(reply["limit"]-reply["used"]))
-                print("- You created this key: "+str(reply["you_own"]))
+                print(f"- {Fore.BLUE}Results uploaded:{Fore.RESET} "+str(reply["used"]))
+                print(f"- {Fore.BLUE}Results limit:{Fore.RESET} "+str(reply["limit"]))
+                print(f"- {Fore.BLUE}Results remaining:{Fore.RESET} "+str(reply["limit"]-reply["used"]))
+                print(f"- {Fore.BLUE}You created this key:{Fore.RESET} "+str(reply["you_own"]))
                 print()
             else:
                 return
@@ -154,12 +158,12 @@ def main():
             conn.send(text)
             reply = conn.recv()
             if reply["success"]:
-                print("Success! Your Sharktest key is {}".format(reply["key"]))
+                print("Success! Your Sharktest key is {}{}{}".format(Fore.GREEN, reply["key"], Fore.RESET))
                 print("You can upload 1000 results with this key, and you will need to generate a new one after that.")
                 print()
                 key = reply["key"]
             else:
-                print("Validation failed.")
+                print(f"{Fore.RED}Captcha failed.{Fore.RESET}")
                 conn.send({"type": "quit"})
                 return
 

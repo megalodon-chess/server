@@ -1,3 +1,4 @@
 python-chess
 bcon
 py-socket
+colorama
