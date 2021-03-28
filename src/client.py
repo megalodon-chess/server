@@ -20,6 +20,9 @@
 import os
 import json
 import pysocket
+from tkinter import Tk
+from tkinter.filedialog import asksaveasfilename
+Tk().withdraw()
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
 if os.path.isfile(os.path.join(PARENT, "settings.json")):
@@ -40,6 +43,33 @@ else:
 
 def main():
     conn = pysocket.Client(IP, PORT, ENC_KEY)
+    conn.send({"type": "isready"})
+    if not conn.recv()["ready"]:
+        print("The server is encountering errors. Please try again later.")
+        return
+
+    try:
+        if input("Do you have a sharktest key? (y/N) ").lower().strip() == "y":
+            key = input("Sharktest key: ")
+        else:
+            print("To prevent false results, we require testers to solve a CAPTCHA.")
+            input("Press enter to download and save a CAPTCHA image as PNG. Press Ctrl+C and Enter to quit.")
+            conn.send({"type": "get_key"})
+            data = conn.recv()
+            with open(asksaveasfilename(), "wb") as file:
+                file.write(data)
+            text = input("Enter the letters you see: ")
+            conn.send(text)
+            reply = conn.recv()
+            if reply["success"]:
+                print("Success!")
+            else:
+                print("Validation failed.")
+                return
+
+    except KeyboardInterrupt:
+        pass
+
     conn.send({"type": "quit"})
 
 

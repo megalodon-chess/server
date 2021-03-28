@@ -18,8 +18,12 @@
 #
 
 import os
+import time
+import random
+import string
 import json
 import pysocket
+from captcha.image import ImageCaptcha
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
 DATA_PATH = os.path.join(PARENT, "data")
@@ -34,12 +38,28 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
     self.alert("Connected")
 
     while True:
+        time.sleep(0.1)
         msg = self.recv()
 
         if msg["type"] == "quit":
             self.quit()
             self.alert("Disconnected")
             break
+
+        elif msg["type"] == "isready":
+            self.send({"ready": True})
+
+        elif msg["type"] == "get_key":
+            font = os.path.join(DATA_PATH, "font.ttf")
+            captcha = ImageCaptcha(fonts=[font], width=640, height=240)
+            text = "".join(random.choices(string.ascii_lowercase, k=6))
+            data = captcha.generate(text).read()
+            self.send(data)
+            reply = self.recv()
+            if reply == text:
+                self.send({"success": True})
+            else:
+                self.send({"success": False})
 
 
 def main():
