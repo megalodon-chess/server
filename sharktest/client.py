@@ -22,6 +22,7 @@ import json
 import pysocket
 import chess
 import chess.engine
+from hashlib import sha256
 from tkinter import Tk
 from tkinter.filedialog import asksaveasfilename
 Tk().withdraw()
@@ -44,7 +45,25 @@ else:
 
 
 def play_games(conn, key, i):
-    pass
+    print("Downloading latest Megalodon build...")
+    conn.send({"type": "getexe"})
+    data = conn.recv()
+    if data["success"]:
+        print("Build hash: {}".format(data["digest"]))
+        print("Options:")
+        for i in data["options"]:
+            print(f"- {i}")
+        if sha256(data["exe"]).hexdigest() != data["digest"]:
+            print("Invalid hash. Aborting.")
+            return
+        path = os.path.join(PARENT, "Megalodon-Sharktest")
+        print(f"Saving executable to {path}")
+        with open(path, "wb") as file:
+            file.write(data["exe"])
+        os.system(f"chmod +x {path}")
+    else:
+        print("The server encountered an error. Please try again later.")
+        return
 
 
 def main():
@@ -66,6 +85,7 @@ def main():
                 print("- Results limit: "+str(reply["limit"]))
                 print("- Results remaining: "+str(reply["limit"]-reply["used"]))
                 print("- You created this key: "+str(reply["you_own"]))
+                print()
         else:
             print("To prevent false results, we require testers to solve a CAPTCHA.")
             input("Press enter to download and save a CAPTCHA image as PNG. Press Ctrl+C and Enter to quit.")
