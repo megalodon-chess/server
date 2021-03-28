@@ -115,7 +115,12 @@ def play_games(conn, key):
             print()
             print()
 
-            conn.send({"type": "result", "key": key, "opt": opt, "value": value})
+            win = False
+            if side and board.result() == "1-0":
+                win = True
+            if not side and board.result() == "0-1":
+                win = True
+            conn.send({"type": "result", "key": key, "opt": opt, "value": value, "win": win})
             if not conn.recv()["success"]:
                 print(f"{Fore.RED}Key used too many times. Please create a new one.{Fore.RESET}")
                 return

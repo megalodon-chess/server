@@ -71,7 +71,12 @@ def queue(dataman: pysocket.DataMan):
                 data["used"] += 1
                 dataman.dump(data, "keys/{}.json".format(cmd["key"]))
 
-                # TODO save result
+                path = "results/{}.json".format(cmd["ip"])
+                if not dataman.isfile(path):
+                    dataman.dump([], path)
+                data = dataman.load(path)
+                data.append({"opt": cmd["opt"], "value": cmd["value"], "win": cmd["win"], "time": time.time()})
+                dataman.dump(data, path)
 
 
 def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
@@ -127,7 +132,7 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
             data = dataman.load("keys/{}.json".format(msg["key"]))
             if data["used"] < data["limit"]:
                 dataman.queue.append({"type": "gameresult", "key": msg["key"], "opt": msg["opt"],
-                    "value": msg["value"], "ip": self.addr[0]})
+                    "value": msg["value"], "win": msg["win"], "ip": self.addr[0]})
                 self.send({"success": True})
             else:
                 self.send({"success": False})
@@ -137,6 +142,7 @@ def main():
     os.makedirs(DATA_PATH, exist_ok=True)
     dataman = pysocket.DataMan(DATA_PATH)
     dataman.makedirs("keys", True)
+    dataman.makedirs("results", True)
     threading.Thread(target=queue, args=(dataman,)).start()
 
     server = pysocket.Server(IP, PORT, start, ENC_KEY, args=(dataman,))
