@@ -38,7 +38,7 @@ else:
     PORT = int(input("Connection port: "))
     ENC_KEY = input("Encryption key: ").encode()
     with open(os.path.join(PARENT, "settings.json"), "w") as file:
-        json.dump({"ip": IP, "port": PORT, "enc_key": ENC_KEY}, file, indent=4)
+        json.dump({"ip": IP, "port": PORT, "enc_key": ENC_KEY.decode()}, file, indent=4)
 
 
 def main():
