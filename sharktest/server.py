@@ -19,6 +19,7 @@
 
 import os
 import time
+import threading
 import random
 import string
 import json
@@ -34,12 +35,33 @@ PORT = data["port"]
 ENC_KEY = data["enc_key"].encode()
 
 
+def stats(dataman: pysocket.DataMan):
+    if not dataman.isfile("stats.json"):
+        dataman.dump({"total_requests": 0, "clients": {}}, "stats.json")
+
+    while True:
+        time.sleep(0.01)
+
+        if len(dataman.queue) > 0:
+            cmd = dataman.queue.pop(0)
+
+            if cmd["type"] == "request":
+                data = dataman.load("stats.json")
+                data["total_requests"] += 1
+                if cmd["ip"] in data["clients"]:
+                    data["clients"][cmd["ip"]]["requests"] += 1
+                else:
+                    data["clients"][cmd["ip"]] = {"requests": 1}
+                dataman.dump(data, "stats.json")
+
+
 def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
     self.alert("Connected")
 
     while True:
         time.sleep(0.1)
         msg = self.recv()
+        dataman.queue.append({"type": "request", "ip": self.addr[0]})
 
         if msg["type"] == "quit":
             self.quit()
@@ -77,6 +99,8 @@ def main():
     os.makedirs(DATA_PATH, exist_ok=True)
     dataman = pysocket.DataMan(DATA_PATH)
     dataman.makedirs("keys", True)
+    threading.Thread(target=stats, args=(dataman,)).start()
+
     server = pysocket.Server(IP, PORT, start, ENC_KEY, args=(dataman,))
     server.start()
 
