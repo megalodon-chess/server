@@ -95,8 +95,8 @@ def play_games(conn, key):
         config = {o: options[o]["default"] for o in options}
         game_num += 1
         print(f"Playing game {Fore.BLUE}{game_num}{Fore.RESET}.")
-        print(f"- Tested option: {opt}")
-        print(f"- New value: {value}")
+        print(f"- {Fore.BLUE}Tested option:{Fore.RESET} {opt}")
+        print(f"- {Fore.BLUE}New value:{Fore.RESET} {value}")
 
         try:
             start = time.time()
