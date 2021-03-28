@@ -65,6 +65,7 @@ def main():
                 print("Success! Your Sharktest key is {}".format(reply["key"]))
             else:
                 print("Validation failed.")
+                conn.send({"type": "quit"})
                 return
 
     except KeyboardInterrupt:
