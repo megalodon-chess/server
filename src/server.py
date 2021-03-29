@@ -24,6 +24,7 @@ import random
 import string
 import json
 import pysocket
+from datetime import datetime
 from hashlib import sha256
 from captcha.image import ImageCaptcha
 
@@ -38,7 +39,7 @@ ENC_KEY = data["enc_key"].encode()
 
 def queue(dataman: pysocket.DataMan):
     if not dataman.isfile("stats.json"):
-        dataman.dump({"total_requests": 0, "clients": {}}, "stats.json")
+        dataman.dump({"total_requests": 0, "clients": {}, "conns": {}}, "stats.json")
 
     while True:
         time.sleep(0.01)
@@ -78,9 +79,22 @@ def queue(dataman: pysocket.DataMan):
                 data.append({"opt": cmd["opt"], "value": cmd["value"], "win": cmd["win"], "time": time.time()})
                 dataman.dump(data, path)
 
+            elif cmd["type"] == "newconn":
+                data = dataman.load("stats.json")
+                if cmd["ip"] in data["conns"]:
+                    data["conns"].pop(cmd["ip"], None)
+                data["conns"][cmd["ip"]] = {"time_start": time.time(), "date_start": datetime.now().strftime("%m-%d-%Y %H-%M-%S")}
+                dataman.dump(data, "stats.json")
+
+            elif cmd["type"] == "rmconn":
+                data = dataman.load("stats.json")
+                data["conns"].pop(cmd["ip"], None)
+                dataman.dump(data, "stats.json")
+
 
 def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
     self.alert("Connected")
+    dataman.queue.append({"type": "newconn", "ip": self.addr[0]})
 
     while True:
         time.sleep(0.1)
@@ -88,6 +102,7 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
         dataman.queue.append({"type": "request", "ip": self.addr[0]})
 
         if msg["type"] == "quit":
+            dataman.queue.append({"type": "rmconn", "ip": self.addr[0]})
             self.quit()
             self.alert("Disconnected")
             break
