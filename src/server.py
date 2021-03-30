@@ -41,25 +41,24 @@ TEST_THRES = 10
 
 def resultcomp(dataman: pysocket.DataMan):
     if not dataman.isfile("results.json"):
-        dataman.dump({}, "results.json") 
+        dataman.dump({}, "results.json")
 
     options = dataman.load("datafiles/options.json")
     while True:
-        #time.sleep(60*RESULT_INC)
+        time.sleep(60*RESULT_INC)
         if len(dataman.listdir("results")) > 0:
             results = {opt: [] for opt in options}
             for file in dataman.listdir("results"):
                 for result in dataman.load(f"results/{file}"):
                     results[result["opt"]].append((result["value"], result["win"]))
 
-            final = {}
+            final = dataman.load("results.json")
             for key in results:
                 curr_results = results[key]
                 if len(curr_results) > TEST_THRES:
                     best = best_val(curr_results, options[key]["min"], options[key]["max"])
                     final[key] = best
             dataman.dump(final, "results.json")
-        break
 
 
 def best_val(results, least, greatest):
@@ -185,6 +184,9 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
                 data = dataman.read("datafiles/Megalodon", mode="rb")
                 digest = sha256(data).hexdigest()
                 options = dataman.load("datafiles/options.json")
+                results = dataman.load("results.json")
+                for key in results:
+                    options[key]["default"] = results[key]
                 self.send({"success": True, "exe": data, "digest": digest, "options": options})
             else:
                 self.send({"success": False})
