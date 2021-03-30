@@ -102,12 +102,19 @@ def play_games(conn, key):
             start = time.time()
             engine = chess.engine.SimpleEngine.popen_uci(data["path"])
             board = chess.Board()
-            while not board.is_game_over():
+            stop = False
+            while not board.is_game_over() and not stop:
                 write(f"Playing ply {len(board.move_stack)+1}.")
                 engine.configure(config)
                 if board.turn == side:
                     engine.configure({opt: value})
-                board.push(engine.play(board, chess.engine.Limit(time=TIME)).move)
+                try:
+                    board.push(engine.play(board, chess.engine.Limit(time=TIME)).move)
+                except chess.engine.EngineError:
+                    print(f"{Fore.RED}Megalodon made an illegal move! Playing next game.")
+                    print()
+                    stop = True
+
             elapse = time.time() - start
             write(f"Game finished in {Fore.BLUE}{len(board.move_stack)}{Fore.RESET} plies. Result is {Fore.BLUE}{board.result()}{Fore.RESET}." + \
                 f"{Fore.BLUE}{elapse}{Fore.RESET} seconds elapsed.")
@@ -151,6 +158,7 @@ def main():
                 print(f"- {Fore.BLUE}You created this key:{Fore.RESET} "+str(reply["you_own"]))
                 print()
             else:
+                conn.send({"type": "quit"})
                 return
         else:
             print("To prevent false results, we require testers to solve a CAPTCHA.")
