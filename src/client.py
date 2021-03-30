@@ -69,7 +69,10 @@ def download_exe(conn):
         if sha256(data["exe"]).hexdigest() != data["digest"]:
             print(f"{Fore.RED}Invalid executable hash. Aborting.{Fore.RESET}")
             return {"status": False}
-        path = os.path.join(PARENT, "Megalodon-Sharktest")
+
+        path = os.path.join(PARENT, f"Megalodon-Sharktest-{random.randint(0, 1000)}")
+        while os.path.isfile(path):
+            path = os.path.join(PARENT, f"Megalodon-Sharktest-{random.randint(0, 1000)}")
         print(f"Saving executable to {Fore.GREEN}{path}{Fore.RESET}")
         with open(path, "wb") as file:
             file.write(data["exe"])
@@ -145,8 +148,9 @@ def main():
         return
 
     try:
-        if input("Do you have a sharktest key? (y/N) ").lower().strip() == "y":
-            key = input("Sharktest key: ")
+        if len(sys.argv) >= 2:
+            key = sys.argv[1]
+            print(f"Using key from sys argument: {key}")
             conn.send({"type": "keyinfo", "key": key})
             reply = conn.recv()
             print("Key information:")
@@ -161,24 +165,40 @@ def main():
                 conn.send({"type": "quit"})
                 return
         else:
-            print("To prevent false results, we require testers to solve a CAPTCHA.")
-            input("Press enter to download and save a CAPTCHA image as PNG. Press Ctrl+C and Enter to quit.")
-            conn.send({"type": "newkey"})
-            data = conn.recv()
-            with open(asksaveasfilename(), "wb") as file:
-                file.write(data)
-            text = input("Enter the letters you see: ")
-            conn.send(text)
-            reply = conn.recv()
-            if reply["success"]:
-                print("Success! Your Sharktest key is {}{}{}".format(Fore.GREEN, reply["key"], Fore.RESET))
-                print("You can upload 1000 results with this key, and you will need to generate a new one after that.")
-                print()
-                key = reply["key"]
+            if input("Do you have a sharktest key? (y/N) ").lower().strip() == "y":
+                key = input("Sharktest key: ")
+                conn.send({"type": "keyinfo", "key": key})
+                reply = conn.recv()
+                print("Key information:")
+                print(f"- {Fore.BLUE}Key exists:{Fore.RESET} "+str(reply["exists"]))
+                if reply["exists"]:
+                    print(f"- {Fore.BLUE}Results uploaded:{Fore.RESET} "+str(reply["used"]))
+                    print(f"- {Fore.BLUE}Results limit:{Fore.RESET} "+str(reply["limit"]))
+                    print(f"- {Fore.BLUE}Results remaining:{Fore.RESET} "+str(reply["limit"]-reply["used"]))
+                    print(f"- {Fore.BLUE}You created this key:{Fore.RESET} "+str(reply["you_own"]))
+                    print()
+                else:
+                    conn.send({"type": "quit"})
+                    return
             else:
-                print(f"{Fore.RED}Captcha failed.{Fore.RESET}")
-                conn.send({"type": "quit"})
-                return
+                print("To prevent false results, we require testers to solve a CAPTCHA.")
+                input("Press enter to download and save a CAPTCHA image as PNG. Press Ctrl+C and Enter to quit.")
+                conn.send({"type": "newkey"})
+                data = conn.recv()
+                with open(asksaveasfilename(), "wb") as file:
+                    file.write(data)
+                text = input("Enter the letters you see: ")
+                conn.send(text)
+                reply = conn.recv()
+                if reply["success"]:
+                    print("Success! Your Sharktest key is {}{}{}".format(Fore.GREEN, reply["key"], Fore.RESET))
+                    print("You can upload 1000 results with this key, and you will need to generate a new one after that.")
+                    print()
+                    key = reply["key"]
+                else:
+                    print(f"{Fore.RED}Captcha failed.{Fore.RESET}")
+                    conn.send({"type": "quit"})
+                    return
 
         play_games(conn, key)
 
