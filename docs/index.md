@@ -35,6 +35,6 @@ You can watch the status in the console. Quit any time by pressing Ctrl+C.
 
 There is currently no official server for Sharktest.
 
-The Megalodon team will start hosting a server on March 29, 2021.
+The Megalodon team will start hosting a server on April 5, 2021.
 
 [client]: https://github.com/megalodon-chess/sharktest/blob/main/src/client.py
