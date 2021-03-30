@@ -14,7 +14,7 @@ you to use your CPU and test Megalodon parameters.
 2. You will need Python 3 and packages defined in `requirements.txt`.
 
 3. Run the client file with Python. Follow the setup instructions if this is your first time.
-The client IP is below.
+The IP, port, and encryption key are below.
 
 4. You will be asked whether you have a Sharktest key.
 If you do, put your key in and jump to step 8. If you don't, keep reading.
@@ -33,8 +33,8 @@ You can watch the status in the console. Quit any time by pressing Ctrl+C.
 
 ## Server IP
 
-There is currently no official server for Sharktest.
-
-The Megalodon team will start hosting a server on April 5, 2021.
+* IP: `54.241.110.86`
+* Port: `5269`
+* Encryption key: `BW8AFo_TjoTN7N5u00w9xnlMNzp9j0rgabXOwus56GQ=`
 
 [client]: https://github.com/megalodon-chess/sharktest/blob/main/src/client.py
