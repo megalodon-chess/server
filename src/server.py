@@ -35,6 +35,52 @@ with open(os.path.join(PARENT, "settings.json"), "r") as file:
 IP = data["ip"]
 PORT = data["port"]
 ENC_KEY = data["enc_key"].encode()
+RESULT_INC = 10
+TEST_THRES = 10
+
+
+def resultcomp(dataman: pysocket.DataMan):
+    if not dataman.isfile("results.json"):
+        dataman.dump({}, "results.json") 
+
+    options = dataman.load("datafiles/options.json")
+    while True:
+        #time.sleep(60*RESULT_INC)
+        if len(dataman.listdir("results")) > 0:
+            results = {opt: [] for opt in options}
+            for file in dataman.listdir("results"):
+                for result in dataman.load(f"results/{file}"):
+                    results[result["opt"]].append((result["value"], result["win"]))
+
+            final = {}
+            for key in results:
+                curr_results = results[key]
+                if len(curr_results) > TEST_THRES:
+                    best = best_val(curr_results, options[key]["min"], options[key]["max"])
+                    final[key] = best
+            dataman.dump(final, "results.json")
+        break
+
+
+def best_val(results, least, greatest):
+    best_score = float("-inf")
+    best = least
+    for i in range(least, greatest+1):
+        sc = score(i, results)
+        if sc > best_score:
+            best_score = sc
+            best = i
+    return best
+
+
+def score(val, results):
+    sc = 0
+    for v, win in results:
+        if win:
+            sc -= abs(v-val)
+        else:
+            sc += abs(v-val)
+    return sc
 
 
 def queue(dataman: pysocket.DataMan):
@@ -155,9 +201,12 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
 
 def main():
     os.makedirs(DATA_PATH, exist_ok=True)
+
+
     dataman = pysocket.DataMan(DATA_PATH)
     dataman.makedirs("keys", True)
     dataman.makedirs("results", True)
+    threading.Thread(target=resultcomp, args=(dataman,)).start()
     threading.Thread(target=queue, args=(dataman,)).start()
 
     server = pysocket.Server(IP, PORT, start, ENC_KEY, args=(dataman,))
