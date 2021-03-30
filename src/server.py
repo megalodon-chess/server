@@ -46,6 +46,7 @@ def resultcomp(dataman: pysocket.DataMan):
     options = dataman.load("datafiles/options.json")
     while True:
         time.sleep(60*RESULT_INC)
+        print("Compiling results...")
         if len(dataman.listdir("results")) > 0:
             results = {opt: [] for opt in options}
             for file in dataman.listdir("results"):
