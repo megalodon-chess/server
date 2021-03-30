@@ -134,6 +134,7 @@ def play_games(conn, key):
             if not conn.recv()["success"]:
                 print(f"{Fore.RED}Key used too many times. Please create a new one.{Fore.RESET}")
                 return
+            os.remove(data["path"])
 
         except KeyboardInterrupt:
             engine.close()
