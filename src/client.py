@@ -120,7 +120,7 @@ def play_games(conn, key):
 
             elapse = time.time() - start
             write(f"Game finished in {Fore.BLUE}{len(board.move_stack)}{Fore.RESET} plies. Result is {Fore.BLUE}{board.result()}{Fore.RESET}." + \
-                f"{Fore.BLUE}{elapse}{Fore.RESET} seconds elapsed.")
+                f" {Fore.BLUE}{elapse}{Fore.RESET} seconds elapsed.")
             engine.quit()
             print()
             print()
