@@ -96,6 +96,7 @@ def play_games(conn, key):
         opt = random.choice(list(options.keys()))
         value = random.randint(options[opt]["min"], options[opt]["max"])
         config = {o: options[o]["default"] for o in options}
+        options["PrintPv"] = False
         game_num += 1
         print(f"Playing game {Fore.BLUE}{game_num}{Fore.RESET}.")
         print(f"- {Fore.BLUE}Tested option:{Fore.RESET} {opt}")
@@ -117,23 +118,25 @@ def play_games(conn, key):
                     print(f"{Fore.RED}Megalodon made an illegal move! Playing next game.")
                     print()
                     stop = True
+                    break
 
-            elapse = time.time() - start
-            write(f"Game finished in {Fore.BLUE}{len(board.move_stack)}{Fore.RESET} plies. Result is {Fore.BLUE}{board.result()}{Fore.RESET}." + \
-                f" {Fore.BLUE}{elapse}{Fore.RESET} seconds elapsed.")
-            engine.quit()
-            print()
-            print()
+            if not stop:
+                elapse = time.time() - start
+                write(f"Game finished in {Fore.BLUE}{len(board.move_stack)}{Fore.RESET} plies. Result is {Fore.BLUE}{board.result()}{Fore.RESET}." + \
+                    f" {Fore.BLUE}{elapse}{Fore.RESET} seconds elapsed.")
+                engine.quit()
+                print()
+                print()
 
-            win = False
-            if side and board.result() == "1-0":
-                win = True
-            if not side and board.result() == "0-1":
-                win = True
-            conn.send({"type": "result", "key": key, "opt": opt, "value": value, "win": win})
-            if not conn.recv()["success"]:
-                print(f"{Fore.RED}Key used too many times. Please create a new one.{Fore.RESET}")
-                return
+                win = False
+                if side and board.result() == "1-0":
+                    win = True
+                if not side and board.result() == "0-1":
+                    win = True
+                conn.send({"type": "result", "key": key, "opt": opt, "value": value, "win": win})
+                if not conn.recv()["success"]:
+                    print(f"{Fore.RED}Key used too many times. Please create a new one.{Fore.RESET}")
+                    return
             os.remove(data["path"])
 
         except KeyboardInterrupt:
