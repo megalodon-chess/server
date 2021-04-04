@@ -1,6 +1,6 @@
 # Sharktest
 
-Programs for testing Megalodon.
+Programs for tuning Megalodon's evaluation.
 
 Read the documentation [here][docs].
 
