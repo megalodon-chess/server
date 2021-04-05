@@ -129,7 +129,7 @@ def queue(dataman: pysocket.DataMan):
                 data = dataman.load("stats.json")
                 if cmd["ip"] in data["conns"]:
                     data["conns"].pop(cmd["ip"], None)
-                data["conns"][cmd["ip"]] = {"time_start": time.time(), "date_start": datetime.now().strftime("%m-%d-%Y %H-%M-%S")}
+                data["conns"][cmd["ip"]] = {"time_start": time.time(), "date_start": datetime.now().strftime("%m-%d-%Y %P-%M-%S %p")}
                 dataman.dump(data, "stats.json")
 
             elif cmd["type"] == "rmconn":
