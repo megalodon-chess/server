@@ -109,8 +109,10 @@ def play_games(conn, key):
             stop = False
             while not board.is_game_over() and not stop:
                 write(f"Playing ply {len(board.move_stack)+1}.")
-                engine.configure(config)
-                if board.turn == side:
+                for key in config:
+                    if key in engine.options:
+                        engine.configure({key: config[key]})
+                if board.turn == side and opt in engine.options:
                     engine.configure({opt: value})
                 try:
                     board.push(engine.play(board, chess.engine.Limit(time=TIME)).move)
