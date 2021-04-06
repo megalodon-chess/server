@@ -185,9 +185,9 @@ def start(self: pysocket.ServerClient, dataman: pysocket.DataMan):
                 data = dataman.read("datafiles/Megalodon", mode="rb")
                 digest = sha256(data).hexdigest()
                 options = dataman.load("datafiles/options.json")
-                results = dataman.load("results.json")
-                for key in results:
-                    options[key]["default"] = results[key]
+                # results = dataman.load("results.json")
+                # for key in results:
+                #     options[key]["default"] = results[key]
                 self.send({"success": True, "exe": data, "digest": digest, "options": options})
             else:
                 self.send({"success": False})
