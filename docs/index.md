@@ -33,6 +33,8 @@ You can watch the status in the console. Quit any time by pressing Ctrl+C.
 
 ## Server IP
 
+**The server is currently not running**
+
 * IP: `54.241.110.86`
 * Port: `5269`
 * Encryption key: `BW8AFo_TjoTN7N5u00w9xnlMNzp9j0rgabXOwus56GQ=`
